@@ -1,0 +1,6 @@
+Pour utiliser:
+- Nécessite PHP7.2+ et MySQL
+- Dans www/inc/Batabase il faut renseigner les codes d'accès à la base de données
+- Lancer deploy.php dans un terminal pour créer les tables dans la base
+- Lancer index.php dans le navigateur. Renseigner un mot de passe, et créer une nouvelle partie.
+-> une entrée est créée dans la table Round
