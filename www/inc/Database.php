@@ -1,18 +1,18 @@
 <?php
-//Gérer les accès à la base de donnée
+/**
+ * Gérer les accès à la base de donnée
+ */
+ 
+require_once("inc/config.php");
+
 class Database{
-    
-    private $db_host="localhost";
-    private $db_user="eleve";
-    private $db_pass="eleve";
-    private $db_name="minotaure";
 
     private $dbh=Null;
 
     public function __construct(){
         if ($this->dbh==Null){
             try {
-                $this->dbh = new PDO('mysql:host='.$this->db_host.';dbname='.$this->db_name, $this->db_user, $this->db_pass);
+                $this->dbh = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASS);
             }
             catch (PDOException $e) {
                 die("Impossible de se connecter à la base de données");
@@ -45,6 +45,57 @@ class Database{
             //die("Impossible de se connecter : " . $e->getMessage());
         }
         return 2;
+    }
+    
+    public function getUserBySession(string $user, string $session):array{
+        $result=[];
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT * FROM user WHERE user=:user AND session=:session");
+            $stmt->bindParam(':user', $user, PDO::PARAM_STR);
+            $stmt->bindParam(':session', $hash, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+            return $result;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération de l'utilisateur impossible";
+        }
+        return $result;
+    }
+    
+    public function registerUser(string $login,string $pw,string $fistname,string $lastname,string $email):int{
+        /**
+         * Retour 1: l'utilisateur a été créé
+         * Retour 2: l'utilisateur existe déja
+         * Retour 3: autre erreur
+         * */
+        if ($db->getUserByLogin($login) != Null){
+            return 2;
+            // Le login existe
+            // ToDo: Renvoyer un message utile à l'utilisateur
+        }
+        
+        try{
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("INSERT INTO user (login, pw, firstname, lastname, email, registerdate) VALUES (:login, :pw, :firstname, :lastname, :email, CURRENT_DATE());");
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
+            $stmt->bindParam(':pw', $pw, PDO::PARAM_STR);
+            $stmt->bindParam(':firstname', $firstname, PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $lastname, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+
+            $stmt->execute();
+            $this->dbh->commit();
+            return true;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'enregistrer l'utilisateur<br>";
+        }
+        return false;
     }
     
     public function createTables():void{
@@ -110,6 +161,8 @@ class Database{
             $this->dbh->exec("CREATE TABLE user (
             id INT AUTO_INCREMENT,
             login VARCHAR(30),
+            pw VARCHAR(255),
+            session VARCHAR(64),
             firstname VARCHAR(30),
             lastname VARCHAR(30),
             email VARCHAR(100),
@@ -122,7 +175,6 @@ class Database{
             $this->dbh->rollBack();
             echo "Impossible de créer la table ${bold}user${reset}\n";
         }
-
         // Table points
         try {
             $this->dbh->beginTransaction();
