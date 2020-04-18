@@ -75,8 +75,8 @@ class Database{
     public function getUserByLogin(string $login):array{
         try {
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("SELECT * FROM user WHERE login=:user");
-            $stmt->bindParam(':user', $user, PDO::PARAM_STR);
+            $stmt = $this->dbh->prepare("SELECT * FROM user WHERE login=:login");
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->dbh->commit();
@@ -95,23 +95,24 @@ class Database{
         }
     }
 
-    public function registerUser(string $login,string $pw,string $fistname,string $lastname,string $email):int{
+    public function registerUser(string $login,string $pw,string $email,string $firstname=NULL,string $lastname=NULL):int{
         /**
          * Retour 1: l'utilisateur a été créé
          * Retour 2: l'utilisateur existe déja
          * Retour 3: autre erreur
          * */
-        if (empty($this->getUserByLogin($login))){
+        if (!empty($this->getUserByLogin($login))){
             return 2;
             // Le login existe
             // ToDo: Renvoyer un message utile à l'utilisateur
         }
         
         try{
+            $hash=password_hash($pw, PASSWORD_DEFAULT);
             $this->dbh->beginTransaction();
             $stmt = $this->dbh->prepare("INSERT INTO user (login, pw, firstname, lastname, email, registerdate) VALUES (:login, :pw, :firstname, :lastname, :email, CURRENT_DATE());");
             $stmt->bindParam(':login', $login, PDO::PARAM_STR);
-            $stmt->bindParam(':pw', $pw, PDO::PARAM_STR);
+            $stmt->bindParam(':pw', $hash, PDO::PARAM_STR);
             $stmt->bindParam(':firstname', $firstname, PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $lastname, PDO::PARAM_STR);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
