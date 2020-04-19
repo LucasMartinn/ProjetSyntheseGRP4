@@ -41,8 +41,19 @@
         font-size: 1.5em;
       }
 
+      #recap{
+        color: #F07329;
+        text-align: center;
+        font-style: italic;
+        opacity: 0.75;
+      }
+
       hr{
         border-color: lightgray;
+      }
+
+      .indentation{
+        text-indent: 20px;
       }
 
 
@@ -61,7 +72,7 @@
 
               <div class="col-sm-6 text-center">
                 <label for="pt_victoire">Points de victoire</label>
-                <input type="number" name="pt_victoire" id="pt_victoire" min="0"/>
+                <input type="number" name="pt_victoire" id="pt_victoire" min="0" value="<?php if (isset($_POST['pt_victoire'])){echo $_POST['pt_victoire'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center">
@@ -69,62 +80,62 @@
 
               <div class="col-sm-6 text-center">  
                 <label for="c_armee">Cartes armées</label>
-                <input type="number" name="c_armee" id="c_armee" min="0"/>
+                <input type="number" name="c_armee" id="c_armee" min="0" value="<?php if (isset($_POST['c_armee'])){echo $_POST['c_armee'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center"> 
                 <label for="m_armee">X armée</label>
-                <input type="number" name="m_armee" id="m_armee" min="0"/>
+                <input type="number" name="m_armee" id="m_armee" min="1" value="<?php if (isset($_POST['m_armee'])){echo $_POST['m_armee'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center">  
                 <label for="c_science">Cartes sciences</label>
-                <input type="number" name="c_science" id="c_science" min="0"/>
+                <input type="number" name="c_science" id="c_science" min="0" value="<?php if (isset($_POST['c_science'])){echo $_POST['c_science'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center"> 
                 <label for="m_science">X science</label>
-                <input type="number" name="m_science" id="m_science" min="0"/>
+                <input type="number" name="m_science" id="m_science" min="1" value="<?php if (isset($_POST['m_science'])){echo $_POST['m_science'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center">
                 <label for="c_economie">Cartes économies</label>
-                <input type="number" name="c_economie" id="c_economie" min="0"/>
+                <input type="number" name="c_economie" id="c_economie" min="0" value="<?php if (isset($_POST['c_economie'])){echo $_POST['c_economie'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center"> 
                 <label for="m_economie">X economie</label>
-                <input type="number" name="m_economie" id="m_economie" min="0"/>
+                <input type="number" name="m_economie" id="m_economie" min="1" value="<?php if (isset($_POST['m_economie'])){echo $_POST['m_economie'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center">
                 <label for="c_merveille">Cartes merveilles</label>
-                <input type="number" name="c_merveille" id="c_merveille" min="0"/>
+                <input type="number" name="c_merveille" id="c_merveille" min="0" value="<?php if (isset($_POST['c_merveille'])){echo $_POST['c_merveille'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center"> 
                 <label for="m_merveille">X merveille</label>
-                <input type="number" name="m_merveille" id="m_merveille" min="0"/>
+                <input type="number" name="m_merveille" id="m_merveille" min="1" value="<?php if (isset($_POST['m_merveille'])){echo $_POST['m_merveille'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center">
                 <label for="j_trader">Jetons traders</label>
-                <input type="number" name="j_trader" id="j_trader" min="0"/>
+                <input type="number" name="j_trader" id="j_trader" min="0" value="<?php if (isset($_POST['j_trader'])){echo $_POST['j_trader'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center"> 
                 <label for="m_trader">X trader</label>
-                <input type="number" name="m_trader" id="m_trader" min="0"/>
+                <input type="number" name="m_trader" id="m_trader" min="1" value="<?php if (isset($_POST['m_trader'])){echo $_POST['m_trader'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center">
                 <label for="j_militaire">Jetons militaires</label>
-                <input type="number" name="j_militaire" id="j_militaire" min="0"/>
+                <input type="number" name="j_militaire" id="j_militaire" min="0" value="<?php if (isset($_POST['j_militaire'])){echo $_POST['j_militaire'];} ?>"/>
               </div>
 
               <div class="col-sm-6 text-center"> 
                 <label for="m_militaire">X militaire</label>
-                <input type="number" name="m_militaire" id="m_militaire" min="0"/>
+                <input type="number" name="m_militaire" id="m_militaire" min="1" value="<?php if (isset($_POST['m_militaire'])){echo $_POST['m_militaire'];} ?>"/>
               </div>
               <div class="col-sm-6 text-center">
               </div>
@@ -154,7 +165,32 @@
                       intval($_POST['j_trader']) * intval($_POST['m_trader']) +
                       intval($_POST['j_militaire']) * intval($_POST['m_militaire']);
 
-                echo '<br><p id="score">Votre score est de '. $resultat. ' !</p>';
+                echo '<br><p id="score">Votre score est de '. $resultat. ' !</p><br>';
+
+                echo '<p id="recap" class="indentation" style="text-decoration: underline;">Récapitulatif :</p>';
+
+                echo '<p id="recap" class="indentation">Points de victoire : ' . $_POST['pt_victoire'] .'</p>';
+
+                echo '<p id="recap" class="indentation">Armée : ' . $_POST['c_armee'] . 'x' . $_POST['m_armee'] . '=' . $_POST['c_armee']*$_POST['m_armee'] . '</p>';
+
+                echo '<p id="recap" class="indentation">Science : ' . $_POST['c_science'] . 'x' . $_POST['m_science'] . '=' . $_POST['c_science']*$_POST['m_science'] . '</p>';
+
+                echo '<p id="recap" class="indentation">Économie : ' . $_POST['c_economie'] . 'x' . $_POST['m_economie'] . '=' . $_POST['c_economie']*$_POST['m_economie'] . '</p>';
+
+                echo '<p id="recap" class="indentation">Merveille : ' . $_POST['c_merveille'] . 'x' . $_POST['m_merveille'] . '=' . $_POST['c_merveille']*$_POST['m_merveille'] . '</p>';
+
+                echo '<p id="recap" class="indentation">Trader : ' . $_POST['j_trader'] . 'x' . $_POST['m_trader'] . '=' . $_POST['j_trader']*$_POST['m_trader'] . '</p>';
+
+                echo '<p id="recap" class="indentation">Militaire : ' . $_POST['j_militaire'] . 'x' . $_POST['m_militaire'] . '=' . $_POST['j_militaire']*$_POST['m_militaire'] . '</p>';
+
+                echo '<p id="recap" class="indentation">Total : ' . $_POST['pt_victoire'] . '+'
+                                                          . $_POST['c_armee']*$_POST['m_armee'] . '+'
+                                                          . $_POST['c_science']*$_POST['m_science'] . '+'
+                                                          . $_POST['c_economie']*$_POST['m_economie'] . '+'
+                                                          . $_POST['c_merveille']*$_POST['m_merveille'] . '+'
+                                                          . $_POST['j_trader']*$_POST['m_trader'] . '+'
+                                                          . $_POST['j_militaire']*$_POST['m_militaire'] . '=' . $resultat . '</p>';
+
               }
               else{
 
