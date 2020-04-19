@@ -206,7 +206,7 @@ class User{
         return $this->status;
     }
     
-    public function getLogin():string{
+    public function getLogin():?string{
         return $this->login;
     }
 
