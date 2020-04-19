@@ -46,32 +46,6 @@ class Database{
         return 2;
     }
 
-    public function getUserByCookie(string $login, string $session):array{
-        $result=[];
-        try {
-            $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("SELECT * FROM user WHERE user=:user AND session=:session");
-            $stmt->bindParam(':user', $user, PDO::PARAM_STR);
-            $stmt->bindParam(':session', $hash, PDO::PARAM_STR);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $this->dbh->commit();
-            return $result;
-        }
-        catch (PDOException $e) {
-            $this->dbh->rollBack();
-            echo "Récupération de l'utilisateur impossible";
-        }
-        return $result;
-    }
-
-    /**
-     * Récupérer les informationss d'un utilisateur
-     * Retourne un tableau associatif contenant les résultats ou un tableau vide.
-     *
-     * @param string $login  Le login de l'utilisateur
-     * @return array
-     */
     public function getUserByLogin(string $login):array{
         try {
             $this->dbh->beginTransaction();
@@ -108,11 +82,10 @@ class Database{
         }
         
         try{
-            $hash=password_hash($pw, PASSWORD_DEFAULT);
             $this->dbh->beginTransaction();
             $stmt = $this->dbh->prepare("INSERT INTO user (login, pw, firstname, lastname, email, registerdate) VALUES (:login, :pw, :firstname, :lastname, :email, CURRENT_DATE());");
             $stmt->bindParam(':login', $login, PDO::PARAM_STR);
-            $stmt->bindParam(':pw', $hash, PDO::PARAM_STR);
+            $stmt->bindParam(':pw', $pw, PDO::PARAM_STR);
             $stmt->bindParam(':firstname', $firstname, PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $lastname, PDO::PARAM_STR);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
@@ -128,6 +101,35 @@ class Database{
         return 3;
     }
     
+    /**
+     * Enregistrer le jeton de session dans la table user.
+     */
+    public function setUserToken(string $login,string $token=Null):bool{
+        try{
+            $this->dbh->beginTransaction();
+            if ($token==Null){
+                $stmt = $this->dbh->prepare("UPDATE user SET token = NULL WHERE login = :login");
+            }
+            else{
+                $stmt = $this->dbh->prepare("UPDATE user SET token =  :token WHERE login = :login");
+                $stmt->bindParam(':token', $token, PDO::PARAM_STR);
+            }
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
+            $stmt->execute();
+            $this->dbh->commit();
+            return True;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+        }
+        return False;
+    }
+
+    //#########################################################################
+    //#########################################################################
+    /*
+     * Fonctions utilisées pour le déploiement du site
+     */
     public function createTables():void{
         $bold  = "\e[1m";
         $reset = "\e[0m";
@@ -192,7 +194,6 @@ class Database{
             id INT AUTO_INCREMENT,
             login VARCHAR(30),
             pw VARCHAR(255),
-            session VARCHAR(64),
             firstname VARCHAR(30),
             lastname VARCHAR(30),
             email VARCHAR(100),
@@ -209,11 +210,35 @@ class Database{
 
         // Colonne registerdate
         try {
+            $this->dbh->beginTransaction();
             $this->dbh->exec("ALTER TABLE `user` ADD `registerdate` DATE NOT NULL AFTER `email`;");
+            $this->dbh->commit();
         }
         catch (PDOException $e) {
             $this->dbh->rollBack();
             echo "Impossible d'ajouter la colonne `registerdate` à la table ${bold}user${reset}\n";
+        }
+        
+        // Colonne token
+        try {
+            $this->dbh->beginTransaction();
+            $this->dbh->exec("ALTER TABLE `user` ADD `token` VARCHAR(255) AFTER `pw`;");
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'ajouter la colonne `token` à la table ${bold}user${reset}\n";
+        }
+        
+        // Colonne session à supprimer
+        try {
+            $this->dbh->beginTransaction();
+            $this->dbh->exec("ALTER TABLE `user` DROP COLUMN `session`;");
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible de supprimer la colonne `session` de la table ${bold}user${reset}\n";
         }
 
         // Table points
