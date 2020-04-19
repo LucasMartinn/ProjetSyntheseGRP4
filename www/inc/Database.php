@@ -1,18 +1,17 @@
 <?php
-//Gérer les accès à la base de donnée
+/**
+ * Gérer les accès à la base de donnée
+ */
+require_once("inc/config.php");
+
 class Database{
-    
-    private $db_host="localhost";
-    private $db_user="eleve";
-    private $db_pass="eleve";
-    private $db_name="minotaure";
 
     private $dbh=Null;
 
     public function __construct(){
         if ($this->dbh==Null){
             try {
-                $this->dbh = new PDO('mysql:host='.$this->db_host.';dbname='.$this->db_name, $this->db_user, $this->db_pass);
+                $this->dbh = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASS);
             }
             catch (PDOException $e) {
                 die("Impossible de se connecter à la base de données");
@@ -46,6 +45,88 @@ class Database{
         }
         return 2;
     }
+
+    public function getUserByCookie(string $login, string $session):array{
+        $result=[];
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT * FROM user WHERE user=:user AND session=:session");
+            $stmt->bindParam(':user', $user, PDO::PARAM_STR);
+            $stmt->bindParam(':session', $hash, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+            return $result;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération de l'utilisateur impossible";
+        }
+        return $result;
+    }
+
+    /**
+     * Récupérer les informationss d'un utilisateur
+     * Retourne un tableau associatif contenant les résultats ou un tableau vide.
+     *
+     * @param string $login  Le login de l'utilisateur
+     * @return array
+     */
+    public function getUserByLogin(string $login):array{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT * FROM user WHERE login=:login");
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération de l'utilisateur impossible";
+        }
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        else{
+            return array();
+            /* Si la requête n'a pas de résultat ce n'est pas un tableau vide qui est retourné
+            mais un booléen. On gère ce cas en renvoyant un tableau vide. */
+        }
+    }
+
+    public function registerUser(string $login,string $pw,string $email,string $firstname=NULL,string $lastname=NULL):int{
+        /**
+         * Retour 1: l'utilisateur a été créé
+         * Retour 2: l'utilisateur existe déja
+         * Retour 3: autre erreur
+         * */
+        if (!empty($this->getUserByLogin($login))){
+            return 2;
+            // Le login existe
+            // ToDo: Renvoyer un message utile à l'utilisateur
+        }
+        
+        try{
+            $hash=password_hash($pw, PASSWORD_DEFAULT);
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("INSERT INTO user (login, pw, firstname, lastname, email, registerdate) VALUES (:login, :pw, :firstname, :lastname, :email, CURRENT_DATE());");
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
+            $stmt->bindParam(':pw', $hash, PDO::PARAM_STR);
+            $stmt->bindParam(':firstname', $firstname, PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $lastname, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+
+            $stmt->execute();
+            $this->dbh->commit();
+            return 1;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'enregistrer l'utilisateur<br>";
+        }
+        return 3;
+    }
     
     public function createTables():void{
         $bold  = "\e[1m";
@@ -53,7 +134,7 @@ class Database{
         // Table game
         try {
             $this->dbh->beginTransaction();
-            $this->dbh->exec("CREATE TABLE game (
+            $this->dbh->exec("CREATE TABLE IF NOT EXISTS game (
             id INT AUTO_INCREMENT,
             name VARCHAR(100),
             PRIMARY KEY (id)
@@ -70,7 +151,7 @@ class Database{
         // Contient la valeur et le nom des carte
         try {
             $this->dbh->beginTransaction();
-            $this->dbh->exec("CREATE TABLE card (
+            $this->dbh->exec("CREATE TABLE IF NOT EXISTS card (
             id INT AUTO_INCREMENT,
             name VARCHAR(100) NOT NULL,
             value VARCHAR(255),
@@ -89,7 +170,7 @@ class Database{
         // Table round
         try {
             $this->dbh->beginTransaction();
-            $this->dbh->exec("CREATE TABLE round (
+            $this->dbh->exec("CREATE TABLE IF NOT EXISTS round (
             code VARCHAR(6) NOT NULL,
             pw VARCHAR(255),
             game INT,
@@ -107,12 +188,15 @@ class Database{
         // Table user
         try {
             $this->dbh->beginTransaction();
-            $this->dbh->exec("CREATE TABLE user (
+            $this->dbh->exec("CREATE TABLE IF NOT EXISTS user (
             id INT AUTO_INCREMENT,
             login VARCHAR(30),
+            pw VARCHAR(255),
+            session VARCHAR(64),
             firstname VARCHAR(30),
             lastname VARCHAR(30),
             email VARCHAR(100),
+            registerdate DATE NOT NULL,
             PRIMARY KEY (id)
             );" );
             $this->dbh->commit();
@@ -123,10 +207,19 @@ class Database{
             echo "Impossible de créer la table ${bold}user${reset}\n";
         }
 
+        // Colonne registerdate
+        try {
+            $this->dbh->exec("ALTER TABLE `user` ADD `registerdate` DATE NOT NULL AFTER `email`;");
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'ajouter la colonne `registerdate` à la table ${bold}user${reset}\n";
+        }
+
         // Table points
         try {
             $this->dbh->beginTransaction();
-            $this->dbh->exec("CREATE TABLE points (
+            $this->dbh->exec("CREATE TABLE IF NOT EXISTS points (
             id INT AUTO_INCREMENT,
             card INT,
             amount INT,
@@ -155,11 +248,11 @@ class Database{
         try {
             // On récupère la liste des mots à retirer
             $badwords=[];
-            if ($handle = opendir( DEPLOYDIR.'/badwords')) {
+            if ($handle = opendir( 'badwords')) {
                 while (false !== ($entry = readdir($handle))) {
-                    if (is_file(DEPLOYDIR."/badwords/$entry")){
+                    if (is_file("badwords/$entry")){
                         echo "fichier $bold$entry$reset trouvé\n";
-                        require_once(DEPLOYDIR."/badwords/$entry");
+                        require_once("badwords/$entry");
                     }
                 }
                 closedir($handle);
