@@ -171,17 +171,17 @@
 
                 echo '<p id="recap" class="indentation">Points de victoire : ' . $_POST['pt_victoire'] .'</p>';
 
-                echo '<p id="recap" class="indentation">Armée : ' . $_POST['c_armee'] . 'x' . $_POST['m_armee'] . '=' . $_POST['c_armee']*$_POST['m_armee'] .'</p>';
+                echo '<p id="recap" class="indentation">Armée : ' . $_POST['c_armee'] . 'x' . $_POST['m_armee'] . '=' . $_POST['c_armee']*$_POST['m_armee'] . '</p>';
 
-                echo '<p id="recap" class="indentation">Science : ' . $_POST['c_science'] . 'x' . $_POST['m_science'] . '=' . $_POST['c_science']*$_POST['m_science'] .'</p>';
+                echo '<p id="recap" class="indentation">Science : ' . $_POST['c_science'] . 'x' . $_POST['m_science'] . '=' . $_POST['c_science']*$_POST['m_science'] . '</p>';
 
-                echo '<p id="recap" class="indentation">Économie : ' . $_POST['c_economie'] . 'x' . $_POST['m_economie'] . '=' . $_POST['c_economie']*$_POST['m_economie'] .'</p>';
+                echo '<p id="recap" class="indentation">Économie : ' . $_POST['c_economie'] . 'x' . $_POST['m_economie'] . '=' . $_POST['c_economie']*$_POST['m_economie'] . '</p>';
 
-                echo '<p id="recap" class="indentation">Merveille : ' . $_POST['c_merveille'] . 'x' . $_POST['m_merveille'] . '=' . $_POST['c_merveille']*$_POST['m_merveille'] .'</p>';
+                echo '<p id="recap" class="indentation">Merveille : ' . $_POST['c_merveille'] . 'x' . $_POST['m_merveille'] . '=' . $_POST['c_merveille']*$_POST['m_merveille'] . '</p>';
 
-                echo '<p id="recap" class="indentation">Trader : ' . $_POST['j_trader'] . 'x' . $_POST['m_trader'] . '=' . $_POST['j_trader']*$_POST['m_trader'] .'</p>';
+                echo '<p id="recap" class="indentation">Trader : ' . $_POST['j_trader'] . 'x' . $_POST['m_trader'] . '=' . $_POST['j_trader']*$_POST['m_trader'] . '</p>';
 
-                echo '<p id="recap" class="indentation">Militaire : ' . $_POST['j_militaire'] . 'x' . $_POST['m_militaire'] . '=' . $_POST['j_militaire']*$_POST['m_militaire'] .'</p>';
+                echo '<p id="recap" class="indentation">Militaire : ' . $_POST['j_militaire'] . 'x' . $_POST['m_militaire'] . '=' . $_POST['j_militaire']*$_POST['m_militaire'] . '</p>';
 
                 echo '<p id="recap" class="indentation">Total : ' . $_POST['pt_victoire'] . '+'
                                                           . $_POST['c_armee']*$_POST['m_armee'] . '+'
@@ -189,7 +189,7 @@
                                                           . $_POST['c_economie']*$_POST['m_economie'] . '+'
                                                           . $_POST['c_merveille']*$_POST['m_merveille'] . '+'
                                                           . $_POST['j_trader']*$_POST['m_trader'] . '+'
-                                                          . $_POST['j_militaire']*$_POST['m_militaire'] . '=' . $resultat .'</p>';
+                                                          . $_POST['j_militaire']*$_POST['m_militaire'] . '=' . $resultat . '</p>';
 
               }
               else{
