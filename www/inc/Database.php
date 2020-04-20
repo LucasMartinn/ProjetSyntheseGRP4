@@ -24,7 +24,7 @@ class Database{
         try {
             $hash=password_hash($pw, PASSWORD_DEFAULT);
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("INSERT INTO round (code, pw, game) VALUES (:code, :pw, :game)");
+            $stmt = $this->dbh->prepare("INSERT INTO round (code, pw, game, creationdate) VALUES (:code, :pw, :game, NOW())");
             $stmt->bindParam(':code', $code, PDO::PARAM_STR, 5);
             $stmt->bindParam(':pw', $hash, PDO::PARAM_STR);
             $stmt->bindParam(':game', $game, PDO::PARAM_INT);
@@ -187,6 +187,29 @@ class Database{
             echo "Impossible de créer la table ${bold}round${reset}\n";
         }
 
+        // Colonne creationdate
+        try {
+            $this->dbh->beginTransaction();
+            $this->dbh->exec("ALTER TABLE `round` ADD `creationdate` TIMESTAMP NOT NULL AFTER `game`;");
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'ajouter la colonne `creationdate` à la table ${bold}round${reset}\n";
+        }
+
+        // Colonne owner
+        try {
+            $this->dbh->beginTransaction();
+            $this->dbh->exec("ALTER TABLE `round` ADD `owner` INT AFTER `creationdate`;");
+            $this->dbh->exec("ALTER TABLE `round` FOREIGN KEY (owner) REFERENCES user(id);");
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'ajouter la colonne `owner` à la table ${bold}round${reset}\n";
+        }
+
         // Table user
         try {
             $this->dbh->beginTransaction();
@@ -218,7 +241,7 @@ class Database{
             $this->dbh->rollBack();
             echo "Impossible d'ajouter la colonne `registerdate` à la table ${bold}user${reset}\n";
         }
-        
+
         // Colonne token
         try {
             $this->dbh->beginTransaction();
@@ -295,21 +318,21 @@ class Database{
                 'ă'=>'a', 'î'=>'i', 'â'=>'a', 'ș'=>'s', 'ț'=>'t', 'Ă'=>'A', 'Î'=>'I', 'Â'=>'A', 'Ș'=>'S', 'Ț'=>'T',
             );
             foreach($badwords as $key=>$value){
-                $badword[$key] = strtr($value, $normalizeChars);
+                $badwords[$key] = strtr($value, $normalizeChars);
             }
             
             // Suppression des doublons
             $badwords=array_unique($badwords);
         }
         catch (PDOException $e) {
-            echo "Impossible de récupérer les mots blacklistés<br>";
+            echo "Impossible de récupérer les mots blacklistés\n";
         }
         
         try{
             // On insère les mots dans la table round
             echo "${bold}Ajout des mots blacklistés${reset}\n";
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("INSERT INTO round (code, pw, game) VALUES (:code, NULL, NULL)");
+            $stmt = $this->dbh->prepare("INSERT INTO round (code, pw, game, creationdate) VALUES (:code, NULL, NULL, NOW());");
             $stmt->bindParam(':code', $code);
             foreach($badwords as $code){
                 if (strlen($code)==5){
@@ -324,17 +347,21 @@ class Database{
             $this->dbh->rollBack();
             echo "Impossible d'enregistrer les mots blacklistés\n";
         }
+
         try{
             // On configure les premiers jeux
             // Pour les tests
             echo "${bold}Ajout des jeux 1 et 2${reset}\n";
             $games=array("It's a Wonderful World","Autre jeu");
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("INSERT INTO game (name) VALUES (:name)");
-            $stmt->bindParam(':name', $name);
+            $stmt = $this->dbh->prepare("INSERT INTO `game` (`id`, `name`) VALUES (:id, :name);");
+            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $id=1;
             foreach($games as $name){
                     $stmt->execute();
-                    echo "ajout du jeu $bold$name$reset\n";
+                    echo "ajout du jeu n°$id: $bold$name$reset\n";
+                    $id++;
                 }
             $this->dbh->commit();
             echo "Commit...\n";
