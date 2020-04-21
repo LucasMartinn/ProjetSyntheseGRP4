@@ -22,12 +22,19 @@ class Database{
     
     public function newRound(string $code, string $pw, int $game):int{
         try {
+            if ($_SESSION['id']){
+                $owner=$_SESSION['id'];
+            }
+            else{
+                $owner=Null;
+            }
             $hash=password_hash($pw, PASSWORD_DEFAULT);
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("INSERT INTO round (code, pw, game, creationdate) VALUES (:code, :pw, :game, NOW())");
+            $stmt = $this->dbh->prepare("INSERT INTO round (code, pw, game, creationdate, owner) VALUES (:code, :pw, :game, NOW(), :owner)");
             $stmt->bindParam(':code', $code, PDO::PARAM_STR, 5);
             $stmt->bindParam(':pw', $hash, PDO::PARAM_STR);
             $stmt->bindParam(':game', $game, PDO::PARAM_INT);
+            $stmt->bindParam(':owner', $owner, PDO::PARAM_INT);
             $stmt->execute();
             $this->dbh->commit();
             return 0;
@@ -45,6 +52,30 @@ class Database{
         }
         return 2;
     }
+
+    public function getRound(string $code):array{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT * FROM round WHERE code=:code");
+            $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération de la partie impossible";
+        }
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        else{
+            return array();
+            /* Si la requête n'a pas de résultat ce n'est pas un tableau vide qui est retourné
+            mais un booléen. On gère ce cas en renvoyant un tableau vide. */
+        }
+    }
+
 
     public function getUserByLogin(string $login):array{
         try {

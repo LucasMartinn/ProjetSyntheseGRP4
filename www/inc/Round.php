@@ -8,14 +8,21 @@ require_once("inc/Database.php");
 
 class Round{
     private $code; //identifiant unique
+    private $pw;
+    private $creationdate;
+    private $game;
+    private $owner;
+    private $status;
     
     public function __construct( string $game="", string $pw="", string $code=""){
+        $this->reset();
         if ($code!=""){
             // Si la partie existe
             // À compléter
             $this->code=$code;
         }
         elseif($pw!="" && $game!=""){
+            // Créer une nouvelle partie
             $this->newRound($game, $pw);
         }
         else{
@@ -41,7 +48,9 @@ class Round{
             // de ne pas en trouver si il reste la moitié des codes de disponibles (26^5/2)
             $ret=$db->newRound($code, $pw, $game);
             if ($ret==0){
-                //La partie est créée
+                // La partie est créée
+                // On l'enregistre dans la session
+                $_SESSION['round']=$code;
                 break;
             }
             if ($ret==2){
@@ -51,9 +60,31 @@ class Round{
         }
         $this->code=$code;
     }
-    
+
+    public function loadRound(string $code):void{
+        $db=new Database();
+        $round=$db->getRound($code);
+        if (!empty($round)){
+            $this->code         = $round['code'];
+            $this->pw           = $round['pw'];
+            $this->creationdate = $round['creationdate'];
+            $this->game         = $round['game'];
+            $this->owner        = $round['owner'];
+            $this->status       = 1;
+        }
+    }
+
+    public function reset(){
+        $this->code         = Null;
+        $this->pw           = Null;
+        $this->creationdate = Null;
+        $this->game         = Null;
+        $this->owner        = Null;
+        $this->status       = Null;
+    }
+
     public function __tostring():string{
-        return "code: ".$this->code;
+        return $this->code;
     }
     
 }
