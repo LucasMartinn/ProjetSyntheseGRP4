@@ -1,4 +1,5 @@
 <?php
+require_once("tpl/userbar.php");
 require_once("inc/Round.php");
 ?>
 <!DOCTYPE html>
@@ -11,6 +12,7 @@ require_once("inc/Round.php");
     <!--<link rel="stylesheet" href="" media="screen"/>-->
 </head>
 <body>
+<?= $userbar ?>
 <h1>Minotaure</h1>
 <?php
 if (!isset($_POST['game']) || !isset($_POST['pw'])){
@@ -32,8 +34,12 @@ if (!isset($_POST['game']) || !isset($_POST['pw'])){
 }
 else{
 $r=new Round($_POST['game'],$_POST['pw']);
-echo $r;
-
+?>
+<h2>Créer une partie</h2>
+<p>Une nouvelle partie a été créée avec le code <strong><?= strtoupper($r) ?></strong><p>
+<p>Vous pouvez maintenant <a href='form.php?round=<?= $r ?>'>renseigner vos scores</a> ou partager ce code avec d'autres joueurs!</p>
+<p>Le mot de passe de la partie sera demandé aux joueurs pour remplir leurs scores.</p>
+<?php
 }
 ?>
 
