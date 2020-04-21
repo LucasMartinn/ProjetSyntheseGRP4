@@ -1,7 +1,6 @@
 <?php
 
 class User{
-
     private $id;
     private $login;
     private $token;
@@ -14,7 +13,6 @@ class User{
     // 1 = user chargé
     // 2 = user non trouvé dans la bdd
     // 3 = mdp incorrect
-
 
     public function __construct(string $login=Null,string $pw=Null,string $email=Null, string $firstname=Null,string $lastname=Null){
         $this->reset();
