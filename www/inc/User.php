@@ -63,18 +63,19 @@ class User{
             if (isset($_COOKIE['token']) and isset($_COOKIE['login'])){
                 $db   = new Database;
                 $user = $db->getUserByLogin($_COOKIE['login']);
-                if (password_verify($_COOKIE['token'],$user['token'])){
-                    $this->id        = $user['id'];
-                    $this->login     = $user['login'];
-                    $this->token     = $user['token'];
-                    $this->pw        = $user['pw'];
-                    $this->firstname = $user['firstname'];
-                    $this->lastname  = $user['lastname'];
-                    $this->email     = $user['email'];
-                    $this->status    = 1;
-                    return;
+                if (!empty($user)){
+                    if (password_verify($_COOKIE['token'],$user['token'])){
+                        $this->id        = $user['id'];
+                        $this->login     = $user['login'];
+                        $this->token     = $user['token'];
+                        $this->pw        = $user['pw'];
+                        $this->firstname = $user['firstname'];
+                        $this->lastname  = $user['lastname'];
+                        $this->email     = $user['email'];
+                        $this->status    = 1;
+                        return;
+                    }
                 }
-
             }
 
         }

@@ -22,7 +22,7 @@ class Database{
     
     public function newRound(string $code, string $pw, int $game):int{
         try {
-            if ($_SESSION['id']){
+            if (isset($_SESSION['id'])){
                 $owner=$_SESSION['id'];
             }
             else{
