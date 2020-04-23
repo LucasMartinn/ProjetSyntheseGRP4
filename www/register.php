@@ -1,6 +1,19 @@
 <?php
-require_once("inc/Database.php");
-require_once("inc/User.php");
+require_once("tpl/userbar.php");
+$msg="";
+if (isset($_POST['reg_login']) && isset($_POST['reg_pw'])){
+    $u=new User($_POST['reg_login'],$_POST['reg_pw'],$_POST['reg_email'],$_POST['reg_firstname'],$_POST['reg_lastname']);
+        if($u->getLogin()!=Null){
+            $_SESSION['message']="Votre inscription a été prise en compte. Nous vous souhaitons la bienvenue!";
+            header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME ));
+        }
+        elseif($u->getStatus()==4){
+            $msg="<p class='information'>Ce login est déjà utilisé, merci d'en choisir un autre.</p>";
+        }
+        elseif($u->getStatus()==5){
+            $msg="<p class='information'>Une erreur a empêché la prise en compte de votre inscription.</p>";
+        }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -13,48 +26,37 @@ require_once("inc/User.php");
 </head>
 <body>
 <h1>Minotaure</h1>
-<?php
-if (!isset($_POST['login']) || !isset($_POST['pw'])){
-?>
-<h2>Créer une compte</h2>
+<h2>Créer un compte</h2>
+    <?= $msg ?>
     <form method='post'>
     
     <br>
-    <label for="login">Login:</label><br>
-    <input type='text' id='login' name='login'>
+    <label for="reg_login">Login:</label><br>
+    <input type='text' id='reg_login' name='reg_login'>
     <br>
     
     <br>
-    <label for="pw">Mot de passe:</label><br>
-    <input type='password' id='pw' name='pw'>
+    <label for="reg_pw">Mot de passe:</label><br>
+    <input type='password' id='reg_pw' name='reg_pw'>
     <br>
 
     <br>
-    <label for="firstname">Prénom:</label><br>
-    <input type='text' id='firstname' name='firstname'>
+    <label for="reg_firstname">Prénom:</label><br>
+    <input type='text' id='reg_firstname' name='reg_firstname'>
     <br>
 
     <br>
-    <label for="lastname">Nom:</label><br>
-    <input type='text' id='lastname' name='lastname'>
+    <label for="reg_lastname">Nom:</label><br>
+    <input type='text' id='reg_lastname' name='reg_lastname'>
     <br>
     
     <br>
-    <label for="email">Adresse e-mail:</label><br>
-    <input type='text' id='email' name='email'>
+    <label for="reg_email">Adresse e-mail:</label><br>
+    <input type='text' id='reg_email' name='reg_email'>
     <br>
     
     <input type='submit'>
     </form>
-<?php
-}
-else{
-$u=new User($_POST['login'],$_POST['pw'],$_POST['email'],$_POST['firstname'],$_POST['lastname']);
-echo $u;
-
-}
-?>
-
 
 </body>
 </html>

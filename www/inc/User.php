@@ -13,6 +13,8 @@ class User{
     // 1 = user chargé
     // 2 = user non trouvé dans la bdd
     // 3 = mdp incorrect
+    // 4 = enregistrement impossible car l'utilisateur existe déjà
+    // 5 = l'enregistrement a échoué pour une autre raison
 
     public function __construct(string $login=Null,string $pw=Null,string $email=Null, string $firstname=Null,string $lastname=Null){
         $this->reset();
@@ -25,9 +27,15 @@ class User{
                     return;
                 }
             }
+            elseif ($ret == 2){
+                // Le login est déjà utilisé
+                $this->status=4;
+                return;
+            }
             else{
-                // Prévoir un message utile à l'utilisateur
-                //echo "Ret $ret";
+                // Autre erreur
+                $this->status=5;
+                return;
             }
         }
 
