@@ -11,3 +11,4 @@ require_once('inc/Database.php');
 $db = new Database;
 $db->createTables();
 $db->populateTables();
+file_put_contents("www/last_deploy.txt",date(DATE_RFC2822));
