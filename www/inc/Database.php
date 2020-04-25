@@ -56,7 +56,7 @@ class Database{
     public function getRound(string $code):array{
         try {
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("SELECT * FROM round WHERE code=:code");
+            $stmt = $this->dbh->prepare("SELECT code, pw, game, creationdate, owner, id, name gamename FROM round, game WHERE code=:code AND round.game = game.id");
             $stmt->bindParam(':code', $code, PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -76,6 +76,55 @@ class Database{
         }
     }
 
+public function setPoint(string $round, int $card, int $amount, int $multi, ?int $user=Null, ?string $guest=Null):bool{
+    try{
+        // Il faut obligatoirement une valeur pour $guest ou pour $user
+        if ($user == Null && $guest == Null) {
+            return false;
+        }
+        $this->dbh->beginTransaction();
+        // On vérifie que l'enregistrement n'existe pas déjà
+        if ($user !=Null){
+            $var_user = "user = :user";
+            $var_guest= "guest IS NULL";
+        }
+        else{
+            $var_user = "user IS NULL";
+            $var_guest= "guest = :guest";
+        }
+        $stmt=$this->dbh->prepare("SELECT COUNT(*) q FROM points WHERE round = :round AND card = :card AND $var_user AND $var_guest;");
+        $stmt->bindParam(':round',  $round,  PDO::PARAM_STR);
+        $stmt->bindParam(':card',   $card,   PDO::PARAM_INT);
+        if ($user != Null){
+            $stmt->bindParam(':user',   $user,   PDO::PARAM_INT);
+        }
+        else{
+            $stmt->bindParam(':guest',  $guest,  PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result['q']>0){
+            return false;
+        }
+        // On enregistre les points
+        $stmt = $this->dbh->prepare("INSERT INTO points (round, card, amount, multi, user, guest)
+            VALUES (:round, :card, :amount, :multi, :user, :guest);");
+        $stmt->bindParam(':round',  $round,  PDO::PARAM_STR);
+        $stmt->bindParam(':card',   $card,   PDO::PARAM_INT);
+        $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
+        $stmt->bindParam(':multi',  $multi,  PDO::PARAM_INT);
+        $stmt->bindParam(':user',   $user,   PDO::PARAM_INT);
+        $stmt->bindParam(':guest',  $guest,  PDO::PARAM_STR);
+        $stmt->execute();
+        $this->dbh->commit();
+        return True;
+    }
+    catch (PDOException $e) {
+        $this->dbh->rollBack();
+        echo "Impossible d'enregistrer le score<br>";
+    }
+    return False;
+}
 
     public function getUserByLogin(string $login):array{
         try {
@@ -182,12 +231,27 @@ class Database{
 
         // Table card
         // Contient la valeur et le nom des carte
+        // Modifier la table existante
         try {
             $this->dbh->beginTransaction();
-            $this->dbh->exec("CREATE TABLE IF NOT EXISTS card (
+            $this->dbh->exec("ALTER TABLE `card` ADD `name_plural` VARCHAR(100) AFTER `name`;");
+            $this->dbh->exec("ALTER TABLE `card` ADD `multi` VARCHAR(100) AFTER `name_plural`;");
+            $this->dbh->exec("ALTER TABLE `card` DROP COLUMN `value`;");
+            $this->dbh->commit();
+            echo "Table ${bold}card${reset} modifiée\n";
+            }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible de modifier la table ${bold}card${reset}\n";
+        }
+        // Créer la table card
+        try {
+            $this->dbh->beginTransaction();
+            $this->dbh->exec("CREATE TABLE IF NOT EXISTS `card` (
             id INT AUTO_INCREMENT,
             name VARCHAR(100) NOT NULL,
-            value VARCHAR(255),
+            name_plural VARCHAR(100) NOT NULL,
+            multi VARCHAR(100) NOT NULL,
             game INT,
             FOREIGN KEY (game) REFERENCES game(id),
             PRIMARY KEY (id)
@@ -302,10 +366,12 @@ class Database{
             id INT AUTO_INCREMENT,
             card INT,
             amount INT,
+            multi INT DEFAULT 1,
             round VARCHAR(6),
             guest VARCHAR(30),
             user INT,
-            FOREIGN KEY (id) REFERENCES card(id),
+            FOREIGN KEY (card) REFERENCES card(id),
+            FOREIGN KEY (user) REFERENCES user(id),
             PRIMARY KEY (id)
             );" );
             //FOREIGN KEY (id) REFERENCES user(id), ?
@@ -316,6 +382,19 @@ class Database{
             $this->dbh->rollBack();
             echo "Impossible de créer la table ${bold}points${reset}\n";
         }
+        // Ajouter une colonne et contrainte de clé étrangère
+        /*try {
+            $this->dbh->beginTransaction();
+            $this->dbh->exec("ALTER TABLE `points` ADD `multi` INT DEFAULT 1 AFTER `amount`;");
+            $this->dbh->exec("ALTER TABLE `points` ADD FOREIGN KEY (user) REFERENCES user(id);");
+            $this->dbh->commit();
+            echo "Table ${bold}points${reset} modifiée\n";
+            }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible de modifier la table ${bold}card${reset}\n";
+        }*/
+        
     }
 
 
@@ -400,6 +479,46 @@ class Database{
         catch (PDOException $e) {
             $this->dbh->rollBack();
             echo "Impossible d'enregistrer les jeux\n";
+        }
+
+        try{
+            // Cartes du jeu "It's a Wonderful World"
+            echo "${bold}Ajout des carte du jeu 1${reset}\n";
+            $cards=array(
+                // name, name_plural, multi, game
+                array("point de victoire","points de victoire", NULL,          1),
+                array("carte armée",      "cartes armées",      "X armée",     1),
+                array("carte science",    "cartes sciences",    "X science",   1),
+                array("carte économie",   "cartes économies",   "X économie",  1),
+                array("carte merveille",  "cartes merveilles",  "X merveille", 1),
+                array("jeton trader ",    "jetons traders ",    "X trader",    1),
+                array("jeton militaire ", "jetons militaires ", "X militaire", 1)
+            );
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("INSERT INTO `card` (`id`, `name`,`name_plural`,`multi`,`game`)
+                VALUES (:id, :name, :name_plural, :multi, :game);");
+            $stmt->bindParam(':id',          $id,          PDO::PARAM_INT);
+            $stmt->bindParam(':name',        $name,        PDO::PARAM_STR);
+            $stmt->bindParam(':name_plural', $name_plural, PDO::PARAM_STR);
+            $stmt->bindParam(':multi',       $multi,       PDO::PARAM_STR);
+            $stmt->bindParam(':game',        $game,        PDO::PARAM_INT);
+            $id=1;
+            foreach($cards as $line){
+                    $name        = $line[0];
+                    $name_plural = $line[1];
+                    $multi       = $line[2];
+                    $game        = $line[3];
+                    $stmt->execute();
+                    echo "ajout de la carte n°$id: $bold$name$reset\n";
+                    echo $id." / ".$line[0]." / ".$line[1]." / ".$line[2]." / ".$line[3]."\n";
+                    $id++;
+                }
+            $this->dbh->commit();
+            echo "Commit...\n";
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Impossible d'enregistrer les cartes\n";
         }
         
         //return true;

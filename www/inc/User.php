@@ -217,6 +217,10 @@ class User{
         return $this->login;
     }
 
+    public function getId():?int{
+        return $this->id;
+    }
+
     public function __tostring():string{
         $str ="id: ".       htmlentities($this->id).       "<br>";
         $str.="login: ".    htmlentities($this->login).    "<br>";

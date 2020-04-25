@@ -20,8 +20,8 @@ if (!isset($_POST["r"])){
     <a href='create.php'>Créer une partie</a><br>
     ou<br>
     <b>Rejoindre une partie</b>
-    <form>
-    <input type='text' name='k'>
+    <form method='post' action='form.php'>
+    <input type='text' name='r'>
     <input type='submit'>
     </form>";
 }
