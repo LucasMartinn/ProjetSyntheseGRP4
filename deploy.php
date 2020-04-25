@@ -11,4 +11,5 @@ require_once('inc/Database.php');
 $db = new Database;
 $db->createTables();
 $db->populateTables();
+date_default_timezone_set ("Europe/Paris");
 file_put_contents("www/last_deploy.txt",date(DATE_RFC2822));
