@@ -37,7 +37,7 @@ $r=new Round($_POST['game'],$_POST['pw']);
 ?>
 <h2>Créer une partie</h2>
 <p>Une nouvelle partie a été créée avec le code <strong><?= strtoupper($r) ?></strong><p>
-<p>Vous pouvez maintenant <a href='form.php?round=<?= $r ?>'>renseigner vos scores</a> ou partager ce code avec d'autres joueurs!</p>
+<p>Vous pouvez maintenant <a href='form.php?r=<?= $r ?>'>renseigner vos scores</a> ou partager ce code avec d'autres joueurs!</p>
 <p>Le mot de passe de la partie sera demandé aux joueurs pour remplir leurs scores.</p>
 <?php
 }
