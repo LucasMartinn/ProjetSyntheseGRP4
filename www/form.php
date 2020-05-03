@@ -22,64 +22,11 @@ $guestbar="    <p>Vous n'êtes pas identifié! Connectez vous ou indiquez un nom
 <html>
     <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/styleForm.css"/>
         <meta charset="UTF-8" />
         <title>FC - <?= $round->getGamename() ?></title>
-        <style>
-
-        div label{
-            color: lightgray;
-            display:block;
-            float:top;
-        }
-
-        body{
-            background-color: #56514E;
-			// zoom: 1.5;
-        }
-
-        h1{
-            text-align: center;
-            color: #F07329;
-            margin: 20 0 20 0;
-        }
-
-        input[type=number] {
-            border: 1px solid;
-            border-radius: 2px;
-            height: 20px;
-        }
-
-        .alert{
-            width: 35%;
-            margin: auto;
-            text-align: center;
-        }
-
-        #score{
-            color: #F07329;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.5em;
-        }
-
-        #recap{
-            color: #F07329;
-            text-align: center;
-            font-style: italic;
-            opacity: 0.75;
-        }
-
-        hr{
-            border-color: lightgray;
-        }
-
-        .indentation{
-            text-indent: 20px;
-        }
-
-
-        </style>
     </head>
+
     <body>
     <?= $userbar ?>
     <h1>Feuille de calcul - <?= $round->getGamename() ?></h1>
