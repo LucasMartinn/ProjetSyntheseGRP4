@@ -226,24 +226,28 @@ class User{
         $this->pw = $pw;
         $db = new Database;
         return $db->setPw($id, $pw);
+        $this->setSession();
     }
 
     public function setFirstname(int $id, string $firstname){
         $this->firstname = $firstname;
         $db = new Database;
         return $db->setFirstname($id, $firstname);
+        $this->setSession();
     }
 
     public function setLastname(int $id, string $lastname){
         $this->lastname = $lastname;
         $db = new Database;
         return $db->setLastname($id, $lastname);
+        $this->setSession();
     }
 
     public function setEmail(int $id, string $email){
         $this->email = $email;
         $db = new Database;
         return $db->setEmail($id, $email);
+        $this->setSession();
     }
 
     public function __tostring():string{
