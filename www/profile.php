@@ -28,7 +28,7 @@ require_once("inc/Database.php");
         <div class="form-group row">
 
             <div class="col-sm-6 text-center">
-                <label for="login">Pseudo</label>
+                <label for="login">Login</label>
                 <input type="text" name="login" id="login" disabled="disabled" value="<?php echo $_SESSION['login'] ?>"/>
             </div>
 
@@ -74,8 +74,7 @@ require_once("inc/Database.php");
 
 <?php
 
-
-/*if(isset($_POST['enregistrer'])){
+if(isset($_POST['enregistrer'])){
 
     if ($_POST['lastname'] != $_SESSION['lastname']) {
         $sql = 'UPDATE user SET lastname="'.$_POST['lastname'].'" WHERE login="'.$_SESSION['login'].'"';
@@ -83,11 +82,13 @@ require_once("inc/Database.php");
         $sql = 'UPDATE user SET firstname="'.$_POST['firstname'].'" WHERE login="'.$_SESSION['login'].'"';
     } elseif ($_POST['email'] != $_SESSION['email']) {
         $sql = 'UPDATE user SET email="'.$_POST['email'].'" WHERE login="'.$_SESSION['login'].'"';
-    } elseif (($_POST['new_password'] != $_SESSION['pw']) && ($_POST['new_password'] === $_POST['conf_password'])) {
+    } elseif (!password_verify($_POST['new_password'], $_SESSION['pw'])
+        && $_POST['new_password'] == $_POST['conf_password']
+        && password_verify($_POST['password'], $_SESSION['pw'])) {
         $sql = 'UPDATE user SET pw="'.$_POST['new_password'].'" WHERE login="'.$_SESSION['login'].'"';
     }
 
-}*/
+}
 
 ?>
 
