@@ -81,6 +81,7 @@ class User{
                         $this->lastname  = $user['lastname'];
                         $this->email     = $user['email'];
                         $this->status    = 1;
+                        $this->setSession();
                         return;
                     }
                 }
