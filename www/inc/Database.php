@@ -213,7 +213,7 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
     public function setLastname(int $id, string $lastname):bool{
         try {
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("UPDATE user SET lastname=:laststname WHERE id=:id");
+            $stmt = $this->dbh->prepare("UPDATE user SET lastname=:lastname WHERE id=:id");
             $stmt->bindParam(':id',       $id,       PDO::PARAM_INT);
             $stmt->bindParam(':lastname', $lastname, PDO::PARAM_STR);
             $stmt->execute();
