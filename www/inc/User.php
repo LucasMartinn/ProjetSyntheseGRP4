@@ -222,32 +222,32 @@ class User{
         return $this->id;
     }
 
-    public function setPw(int $id, string $pw){
+    public function setPw(int $id, string $pw):bool{
         $this->pw = $pw;
         $db = new Database;
-        return $db->setPw($id, $pw);
         $this->setSession();
+        return $db->setPw($id, $pw);
     }
 
-    public function setFirstname(int $id, string $firstname){
+    public function setFirstname(int $id, string $firstname):bool{
         $this->firstname = $firstname;
         $db = new Database;
-        return $db->setFirstname($id, $firstname);
         $this->setSession();
+        return $db->setFirstname($id, $firstname);
     }
 
-    public function setLastname(int $id, string $lastname){
+    public function setLastname(int $id, string $lastname):bool{
         $this->lastname = $lastname;
         $db = new Database;
-        return $db->setLastname($id, $lastname);
         $this->setSession();
+        return $db->setLastname($id, $lastname);
     }
 
-    public function setEmail(int $id, string $email){
+    public function setEmail(int $id, string $email):bool{
         $this->email = $email;
         $db = new Database;
-        return $db->setEmail($id, $email);
         $this->setSession();
+        return $db->setEmail($id, $email);
     }
 
     public function __tostring():string{

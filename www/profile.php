@@ -2,8 +2,27 @@
 require_once("tpl/userbar.php");
 require_once("inc/User.php");
 require_once("inc/Database.php");
-?>
-<html>
+
+if(isset($_POST['enregistrer'])){
+
+    if ($_POST['lastname'] != $_SESSION['lastname']) {
+        $user->setLastname($user->getId(), $_POST['lastname']);
+    }
+    if ($_POST['firstname'] != $_SESSION['firstname']) {
+        $user->setFirstname($user->getId(), $_POST['firstname']);
+    }
+    if ($_POST['email'] != $_SESSION['email']) {
+        $user->setEmail($user->getId(), $_POST['email']);
+    }
+    if (!password_verify($_POST['new_password'], $_SESSION['pw'])
+        && $_POST['new_password'] == $_POST['conf_password']
+        && password_verify($_POST['password'], $_SESSION['pw'])) {
+        $user->setPw($user->getId(), $_POST['new_password']);
+    }
+
+}
+
+?><html>
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/styleForm.css"/>
@@ -71,26 +90,6 @@ require_once("inc/Database.php");
     </form>
 
 </div>
-
-<?php
-
-if(isset($_POST['enregistrer'])){
-
-    if ($_POST['lastname'] != $_SESSION['lastname']) {
-        $user->setLastname($user->getId(), $_POST['lastname']);
-    } elseif ($_POST['firstname'] != $_SESSION['firstname']) {
-        $user->setFirstname($user->getId(), $_POST['firstname']);
-    } elseif ($_POST['email'] != $_SESSION['email']) {
-        $user->setEmail($user->getId(), $_POST['email']);
-    } elseif (!password_verify($_POST['new_password'], $_SESSION['pw'])
-        && $_POST['new_password'] == $_POST['conf_password']
-        && password_verify($_POST['password'], $_SESSION['pw'])) {
-        $user->setPw($user->getId(), $_POST['new_password']);
-    }
-
-}
-
-?>
 
 
 </body>
