@@ -126,6 +126,50 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
     return False;
 }
 
+    public function getPlayers(string $round):array{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT DISTINCT user, guest, login FROM points, user WHERE round=:round AND user.id = points.user UNION
+            SELECT DISTINCT user, guest, 'TEST' login FROM points WHERE round=:round AND user IS NOT NULL
+            ORDER BY user, guest");
+            $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchall(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération des joueurs impossible";
+        }
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        else{
+            return array();
+        }
+    }
+
+    public function getPoints(string $round):array{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT * FROM points WHERE round=:round ORDER BY user, guest");
+            $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchall(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération des points impossible";
+        }
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        else{
+            return array();
+        }
+    }
+
     public function getUserByLogin(string $login):array{
         try {
             $this->dbh->beginTransaction();
@@ -148,6 +192,75 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
             mais un booléen. On gère ce cas en renvoyant un tableau vide. */
         }
     }
+
+    public function setFirstname(int $id, string $firstname):bool{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("UPDATE user SET firstname=:firstname WHERE id=:id");
+            $stmt->bindParam(':id',        $id,        PDO::PARAM_INT);
+            $stmt->bindParam(':firstname', $firstname, PDO::PARAM_STR);
+            $stmt->execute();
+            $this->dbh->commit();
+            return True;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            return False;
+            echo "Modification du prénom impossible";
+        }
+    }
+
+    public function setLastname(int $id, string $lastname):bool{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("UPDATE user SET lastname=:laststname WHERE id=:id");
+            $stmt->bindParam(':id',       $id,       PDO::PARAM_INT);
+            $stmt->bindParam(':lastname', $lastname, PDO::PARAM_STR);
+            $stmt->execute();
+            $this->dbh->commit();
+            return True;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            return False;
+            echo "Modification du nom impossible";
+        }
+    }
+
+    public function setPw(int $id, string $pw):bool{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("UPDATE user SET pw=:pw WHERE id=:id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':pw', $pw, PDO::PARAM_STR);
+            $stmt->execute();
+            $this->dbh->commit();
+            return True;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            return False;
+            echo "Modification du mot de passe impossible";
+        }
+    }
+
+    public function setEmail(int $id, string $email):bool{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("UPDATE user SET email=:email WHERE id=:id");
+            $stmt->bindParam(':id',    $is,    PDO::PARAM_INT);
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+            $this->dbh->commit();
+            return True;
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            return False;
+            echo "Modification de l'e-mail impossible";
+        }
+    }
+
 
     public function registerUser(string $login,string $pw,string $email,string $firstname=NULL,string $lastname=NULL):int{
         /**
