@@ -77,15 +77,15 @@ require_once("inc/Database.php");
 if(isset($_POST['enregistrer'])){
 
     if ($_POST['lastname'] != $_SESSION['lastname']) {
-        $sql = 'UPDATE user SET lastname="'.$_POST['lastname'].'" WHERE login="'.$_SESSION['login'].'"';
+        $user->setLastname($user->getId(), $_POST['lastname']);
     } elseif ($_POST['firstname'] != $_SESSION['firstname']) {
-        $sql = 'UPDATE user SET firstname="'.$_POST['firstname'].'" WHERE login="'.$_SESSION['login'].'"';
+        $user->setFirstname($user->getId(), $_POST['firstname']);
     } elseif ($_POST['email'] != $_SESSION['email']) {
-        $sql = 'UPDATE user SET email="'.$_POST['email'].'" WHERE login="'.$_SESSION['login'].'"';
+        $user->setEmail($user->getId(), $_POST['email']);
     } elseif (!password_verify($_POST['new_password'], $_SESSION['pw'])
         && $_POST['new_password'] == $_POST['conf_password']
         && password_verify($_POST['password'], $_SESSION['pw'])) {
-        $sql = 'UPDATE user SET pw="'.$_POST['new_password'].'" WHERE login="'.$_SESSION['login'].'"';
+        $user->setPw($user->getId(), $_POST['new_password']);
     }
 
 }
