@@ -248,7 +248,7 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
         try {
             $this->dbh->beginTransaction();
             $stmt = $this->dbh->prepare("UPDATE user SET email=:email WHERE id=:id");
-            $stmt->bindParam(':id',    $is,    PDO::PARAM_INT);
+            $stmt->bindParam(':id',    $id,    PDO::PARAM_INT);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
             $this->dbh->commit();
@@ -260,7 +260,6 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
             echo "Modification de l'e-mail impossible";
         }
     }
-
 
     public function registerUser(string $login,string $pw,string $email,string $firstname=NULL,string $lastname=NULL):int{
         /**
