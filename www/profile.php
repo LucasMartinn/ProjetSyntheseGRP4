@@ -14,15 +14,54 @@ if(isset($_POST['enregistrer'])){
     if ($_POST['email'] != $_SESSION['email']) {
         $user->setEmail($user->getId(), $_POST['email']);
     }
-    if (!password_verify($_POST['new_password'], $_SESSION['pw'])
-        && $_POST['new_password'] == $_POST['conf_password']
-        && password_verify($_POST['password'], $_SESSION['pw'])) {
-        $user->setPw($user->getId(), $_POST['new_password']);
+    if ($_POST['new_password']!="" && $_POST['conf_password']!="" && $_POST['password']=="" ||
+        $_POST['new_password']!="" && $_POST['password']!="" && $_POST['conf_password']=="" ||
+        $_POST['conf_password']!="" && $_POST['password']!="" && $_POST['new_password']=="") {
+        ?>
+        <div class="alert alert-danger" role="alert">
+            Veuillez remplir tous les champs pour le changement de mot de passe !
+        </div>
+        <?php
+    }
+    if ($_POST['new_password']!="" && $_POST['conf_password']!="" && $_POST['password']!="") {
+        if (!password_verify($_POST['new_password'], $_SESSION['pw'])
+            && $_POST['new_password'] == $_POST['conf_password']
+            && password_verify($_POST['password'], $_SESSION['pw'])) {
+            $user->setPw($user->getId(), $_POST['new_password']);
+            ?>
+            <div class="alert alert-success" role="alert">
+                Mot de passe modifié avec succès !
+            </div>
+            <?php
+        }
+        elseif (!password_verify($_POST['password'], $_SESSION['pw'])) {
+            ?>
+            <div class="alert alert-danger" role="alert">
+                Le mot de passe actuel n'est pas le bon&nbsp;!
+            </div>
+            <?php
+        }
+        elseif ($_POST['new_password'] != $_POST['conf_password']) {
+            ?>
+            <div class="alert alert-danger" role="alert">
+                Le mot de passe de confirmation ne correspond pas au nouveau mot de passe&nbsp;!
+            </div>
+            <?php
+        }
+        elseif (password_verify($_POST['new_password'], $_SESSION['pw'])) {
+            ?>
+            <div class="alert alert-danger" role="alert">
+                Le nouveau mot de passe que vous avez saisie est le même que votre mot de passe actuel !
+            </div>
+            <?php
+        }
     }
 
 }
 
-?><html>
+?>
+
+<html>
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/styleForm.css"/>
