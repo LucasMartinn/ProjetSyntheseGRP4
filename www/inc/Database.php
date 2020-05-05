@@ -229,10 +229,11 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
 
     public function setPw(int $id, string $pw):bool{
         try {
+            $hash=password_hash($pw, PASSWORD_DEFAULT);
             $this->dbh->beginTransaction();
             $stmt = $this->dbh->prepare("UPDATE user SET pw=:pw WHERE id=:id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->bindParam(':pw', $pw, PDO::PARAM_STR);
+            $stmt->bindParam(':pw', $hash, PDO::PARAM_STR);
             $stmt->execute();
             $this->dbh->commit();
             return True;
