@@ -1,0 +1,88 @@
+body {
+	background-image : url("../images/background.png") ;
+	background-color : #222222;
+	margin : 0 ;
+}
+
+header {
+	height : 60px ;
+	color : white ;
+	font-size : 20px ; ;
+	background-color : #192730 ;
+	border-bottom : 2px solid #1b4159 ;
+}
+
+
+#userbar a:first-child {
+	color: white;
+	float : left ;
+	height : 100% ;
+	line-height: 14px;
+	margin-left : 20px ;
+	margin-top: 20px;
+}
+
+#userbar a:last-child {
+	color: white;
+	float : right ;
+	height : 100% ;
+	margin-right : 20px ;
+	margin-top: 20px;
+}
+
+#jeu {
+	margin-top : 5% ;
+	text-align : center ;
+	width : 30% ;
+	margin-left : auto ;
+	margin-right : auto ;
+	color : white ;
+}
+
+#jeu h2 {
+	font-variant : small-caps ;
+	font-size : 3em ;
+}
+
+#jeu h3 {
+	font-style : italic ;
+	font-size : 2em ;
+	
+}
+
+#resultats {
+	width : 30% ;
+	margin : auto ;
+	border-radius: 5px;
+	height : 365px ;
+	padding-top : 20px ;
+	color : white ;
+	text-align : center ;
+	line-height : 70px ;
+	font-size : 18px ;
+}
+
+a.joueurs {
+	color:white ;
+	background-color : #192730 ;
+	margin-bottom : 20px ;
+	width : 90% ;
+	margin-left : auto ;
+	margin-right : auto ;
+	height : 70px ;
+	border-radius: 10px;
+	border : 1px solid #1b4159 ;
+	display: block 
+}
+
+a.joueurs.guest {
+	background-color : rgba(25,39,48,0.4);
+	margin-bottom : 20px ;
+	width : 90% ;
+	margin-left : auto ;
+	margin-right : auto ;
+	height : 70px ;
+	border-radius: 10px;
+	border : 1px dashed #1b4159 ;
+	display: block ;
+}
