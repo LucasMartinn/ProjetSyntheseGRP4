@@ -129,9 +129,13 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
     public function getPlayers(string $round):array{
         try {
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("SELECT DISTINCT user, guest, login FROM points, user WHERE round=:round AND user.id = points.user UNION
-            SELECT DISTINCT user, guest, 'TEST' login FROM points WHERE round=:round AND user IS NOT NULL
-            ORDER BY user, guest");
+            $stmt = $this->dbh->prepare(
+            "SELECT DISTINCT user 'id', guest 'guestname', login, SUM(amount * multi) score FROM points, user WHERE round=:round AND user.id = points.user
+            GROUP BY id
+            UNION
+            SELECT DISTINCT user 'id', guest 'guestname', NULL 'login', SUM(amount * multi) score FROM points WHERE round=:round AND points.user IS NULL
+            GROUP BY guestname
+            ORDER BY score");
             $stmt->bindParam(':round', $round, PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetchall(PDO::FETCH_ASSOC);
@@ -149,11 +153,31 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
         }
     }
 
-    public function getPoints(string $round):array{
+    public function getPoints(string $round, ?int $userid, ?string $guestname):array{
         try {
+            if ( ($userid == Null && $guestname == Null) || ($userid != Null && $guestname != Null) ){
+                die ("Erreur de récupération des points: nom d'utilisateur ou invité invalide");
+            }
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("SELECT * FROM points WHERE round=:round ORDER BY user, guest");
-            $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+            if($userid == Null){
+                $stmt = $this->dbh->prepare(
+                "SELECT card, amount, points.multi, name cardname, name_plural cardname_p FROM points, card
+                WHERE round=:round
+                AND   user IS NULL
+                AND   guest=:guestname
+                AND   points.card = card.id ");
+                $stmt->bindParam(':guestname', $guestname, PDO::PARAM_STR);
+            }
+            else{
+                $stmt = $this->dbh->prepare(
+                "SELECT card, amount, points.multi, name cardname, name_plural cardname_p FROM points, card
+                WHERE round=:round
+                AND   user=:userid
+                AND   guest IS NULL
+                AND   points.card = card.id ");
+                $stmt->bindParam(':userid',    $userid, PDO::PARAM_INT);
+            }
+            $stmt->bindParam(':round',     $round, PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetchall(PDO::FETCH_ASSOC);
             $this->dbh->commit();

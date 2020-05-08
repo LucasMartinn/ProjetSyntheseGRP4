@@ -1,0 +1,100 @@
+body {
+	background-image : url("../images/background.png") ;
+	background-color : #222222;
+	margin : 0 ;
+}
+
+/*
+ * HEADER
+ * */
+ 
+header {
+	height : 20vw ;
+	color : white ;
+	font-size : 20px ; ;
+	background-color : #192730 ;
+	border-bottom : 2px solid #1b4159 ;
+	text-align: center;
+}
+
+
+body>header img {
+	width: 13vw;
+	margin : 2vw 1vw ;
+	display: inline-block;
+}
+
+body>header h1{
+	font-size: 9vw;
+	display: inline-block;
+	width: 65vw ;
+	margin-top:0;
+	padding-top: 0;
+	vertical-align: 30%;
+}
+
+body>header>h1>a{
+	color: white;
+	text-decoration: none;
+}
+
+@keyframes dissolve {
+  from {opacity: 0.4;}
+  to   {opacity: 1;}
+}
+
+#mainMenu, #mainLogin{
+	animation-name: dissolve;
+	animation-duration: 0.3s;
+	background-color : #192730;
+	position: absolute;
+	//top: 50px;
+	width: 100%;
+	display: none;
+	text-align: center;
+}
+
+#mainLogin div, #mainLogin form{
+	font-size: 4vw;
+	color: white;
+	width: 90%;
+	background-color : #192730 ;
+	border : 2px solid #1b4159 ;
+	text-align: center;
+	margin: auto;
+	border-radius: 3vw;
+}
+
+#mainLogin input{
+	font-size: 4vw;
+	color: white;
+	width: 90%;
+	background-color : #1b4159 ;
+	border : 2px solid #eeeeee ;
+	text-align: center;
+	margin: 1vw;
+	border-radius: 3vw;
+	margin: 2vw 0;
+}
+
+#mainLogin a, #mainMenu a{
+	color: white;
+	width: 90%;
+	background-color : #1b4159 ;
+	border : 2px solid #eeeeee ;
+	display: inline-block;
+	padding: 2vw;
+	font-size: 5vw;
+	text-decoration: none;
+	font-weight: bold;
+	border-radius: 2vw;
+	margin: 2vw 0;
+}
+
+#mainLogin p{
+	color: white;
+	font-size: 5vw;
+	font-weight: bold;
+}
+
+

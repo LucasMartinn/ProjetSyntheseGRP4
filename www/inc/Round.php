@@ -122,6 +122,10 @@ public function setPoint(int $card, int $amount, int $multi, ?int $user=Null, ?s
     return $point;
 }
 
+/*public function getPoints(string $code):array{
+    $db=new Database();
+    $points=$db->getPoints($code);
+}*/
 
 public function getCode():string{
     return $this->code;
@@ -148,6 +152,11 @@ public function getStatus():string{
 
 public function getGameName():string{
     return $this->gamename;
+}
+
+public function getPlayers():array{
+    $db=new Database();
+    return $db->getPlayers($this->code);
 }
 
     public function reset(){

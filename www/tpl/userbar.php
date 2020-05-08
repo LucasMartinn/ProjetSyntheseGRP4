@@ -29,21 +29,19 @@ if (isset($_GET["logout"])){
 
 // à afficher si l'utilisateur est connecté
 if ($user->getLogin()!=Null){
-    $userbar="<div class='userbar'><a class='login' href='profile.php'>".$user->getLogin()."</a> <span><a href='".$_SERVER["PHP_SELF"]."?logout=1'>Déconnexion</a></span></div>";
+    $userbar="    <a class='login' href='profile.php'>".$user->getLogin()."</a> <a href='".$_SERVER["PHP_SELF"]."?logout=1'>Déconnexion</a>";
 }
 
 // à afficher si l'utilisateur est déconnecté
 else{
-    $userbar="    <div class='userbar'>
-    <form method='post'>
+    $userbar="    <form method='post'>
     <input type='text'     name='login' placeholder='Identifiant'>
     <input type='password' name='pw'    placeholder='Mot de passe'>
     <input type='submit'   value='OK'>
     </form>
-    <p>Pas encore de compte? <a href='register.php'>S'inscrire</a></p>
-    </div>";
+    <p>Pas encore de compte? <a href='register.php'>S'inscrire</a></p>";
 }
 
-$userbar = "<div id='userbar'>
+$userbar = "    <div id='userbar'>
 $userbar
-</div>";
+    </div>";
