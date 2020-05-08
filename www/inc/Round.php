@@ -116,10 +116,17 @@ private function fromSession():bool{
     return False;
 }
 
-public function setPoint(int $card, int $amount, int $multi, ?int $user=Null, ?string $guestname=Null):bool{
-    $db=new Database();
-    $point=$db->setPoint($this->code, $card, $amount, $multi, $user, $guestname);
-    return $point;
+public function setPoint(int $card, int $amount, int $multi, ?int $user=Null, ?string $guestname=Null, string $pw):int{
+    if(password_verify($pw, $this->pw)){
+        $db=new Database();
+        $point=$db->setPoint($this->code, $card, $amount, $multi, $user, $guestname);
+        return $point;
+    }
+    else return 2;
+    // 0 paramètres invalides
+    // 1 enregistrement réussi
+    // 2 mauvais mot de passe pour la partie
+    // 3 enregistrement existant
 }
 
 /*public function getPoints(string $code):array{

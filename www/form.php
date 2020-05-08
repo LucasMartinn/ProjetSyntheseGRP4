@@ -1,5 +1,5 @@
 <?php
-require_once("tpl/userbar.php");
+require_once("tpl/header.php");
 require_once("inc/Round.php");
 
 if (isset($_GET['r'])){
@@ -12,24 +12,72 @@ if ($round->getStatus() != 1) {
     // Si on ne parvient pas à charger la partie, redirection vers la page principale
     header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME ));
 }
-$guestbar="<input type='hidden' name='guest' value='no_value'>";
+//$guestbar="<input type='hidden' name='guest' value='no_value'>";
 if ($user->getStatus()!=1){
-$guestbar="    <p>Vous n'êtes pas identifié! Connectez vous ou indiquez un nom d'invité ici:</p>
-    <input type='text' name='guest' placeholder='Nom'>
+    $guest =  isset($_POST['guest']) ? $_POST['guest'] : "";
+    $guestbar="    <p>Vous n'êtes pas identifié! Connectez vous ou indiquez un nom d'invité ici:</p>
+    <input type='text' name='guest' placeholder='Nom' value='".$guest."'>
     <hr>";
 }
-?>
-<html>
+
+$points_message="";
+if (isset($_POST['record'])){
+    if ($_POST['rec_guest']!=""
+    &&  $_POST['round_pw']!=""
+    &&  $_POST['rec_pt_victoire']!=""
+    &&  $_POST['rec_c_armee']!=""
+    &&  $_POST['rec_c_science']!=""
+    &&  $_POST['rec_c_economie']!=""
+    &&  $_POST['rec_c_merveille']!=""
+    &&  $_POST['rec_j_trader']!=""
+    &&  $_POST['rec_j_militaire']!="" 
+    &&  $_POST['rec_m_armee']!=""
+    &&  $_POST['rec_m_science']!=""
+    &&  $_POST['rec_m_economie']!=""
+    &&  $_POST['rec_m_merveille']!=""
+    &&  $_POST['rec_m_trader']!=""
+    &&  $_POST['rec_m_militaire']!="") {
+        // Enregistrement des points
+        $guestname = ($_POST['rec_guest']=="") ? Null : $_POST['rec_guest'];
+        $ret=array();
+        $ret[0]=$round->setPoint(1,$_POST['rec_pt_victoire'], 1,                         $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[1]=$round->setPoint(2,$_POST['rec_c_armee'],     $_POST['rec_m_armee'],     $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[2]=$round->setPoint(3,$_POST['rec_c_science'],   $_POST['rec_m_science'],   $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[3]=$round->setPoint(4,$_POST['rec_c_economie'],  $_POST['rec_m_economie'],  $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[4]=$round->setPoint(5,$_POST['rec_c_merveille'], $_POST['rec_m_merveille'], $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[5]=$round->setPoint(6,$_POST['rec_j_trader'],    $_POST['rec_m_trader'],    $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[6]=$round->setPoint(7,$_POST['rec_j_militaire'], $_POST['rec_m_militaire'], $user->getId(), $guestname, $_POST['round_pw']);
+        
+        foreach ($ret as $value){
+            if ($value==0){
+                $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: paramètres invalides.</div>";
+                break;
+            }
+             if ($value==2){
+                $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: le mot de passe est incorrect.</div>";
+                break;
+            }
+            if ($value==3){
+                $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: les données existent déjà.</div>";
+                break;
+            }
+        }
+        // L'enregistrement s'est bien passé, on retourne à la page de la partie
+        header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/round.php?r=".$round->getCode());
+    }
+}
+?><!DOCTYPE html>
+<html lang="fr">
     <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/styleForm.css"/>
+        <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/style.css"/>
         <meta charset="UTF-8" />
         <title>FC - <?= $round->getGamename() ?></title>
     </head>
-
     <body>
-    <?= $userbar ?>
-    <h1>Feuille de calcul - <?= $round->getGamename() ?></h1>
+    <?= $header ?>
+    <h1>Feuille de calcul - <?= $round->getGamename() ?><br><a href="round.php?r=<?= $round->getCode() ?>">Partie <?= strtoupper($round->getCode()) ?></a></h1>
     <hr>
     <div class="container">
         <form method="post">
@@ -132,15 +180,7 @@ $guestbar="    <p>Vous n'êtes pas identifié! Connectez vous ou indiquez un nom
                       intval($_POST['j_trader']) * intval($_POST['m_trader']) +
                       intval($_POST['j_militaire']) * intval($_POST['m_militaire']);
                 
-                // Enregistrement des 
-                $guestname = ($_POST['guest']=="") ? Null : $_POST['guest'];
-                $round->setPoint(1,$_POST['pt_victoire'], 1,                     $user->getId(), $guestname);
-                $round->setPoint(2,$_POST['c_armee'],     $_POST['m_armee'],     $user->getId(), $guestname);
-                $round->setPoint(3,$_POST['c_science'],   $_POST['m_science'],   $user->getId(), $guestname);
-                $round->setPoint(4,$_POST['c_economie'],  $_POST['m_economie'],  $user->getId(), $guestname);
-                $round->setPoint(5,$_POST['c_merveille'], $_POST['m_merveille'], $user->getId(), $guestname);
-                $round->setPoint(6,$_POST['j_trader'],    $_POST['m_trader'],    $user->getId(), $guestname);
-                $round->setPoint(7,$_POST['j_militaire'], $_POST['m_militaire'], $user->getId(), $guestname);
+
 
                 echo '<br><p id="score">Votre score est de '. $resultat. ' !</p><br>';
 
@@ -167,8 +207,26 @@ $guestbar="    <p>Vous n'êtes pas identifié! Connectez vous ou indiquez un nom
                                                           . $_POST['c_merveille']*$_POST['m_merveille'] . '+'
                                                           . $_POST['j_trader']*$_POST['m_trader'] . '+'
                                                           . $_POST['j_militaire']*$_POST['m_militaire'] . '=' . $resultat . '</p>';
-														  
-				echo '<button style="display: block; margin : auto;" type="submit" name="valider" class="btn btn-success mt-4">Valider score</button>';
+
+                echo '<form method="post" action="form.php">
+                    <input type="hidden" name="rec_guest"       value="'.$_POST['guest'].'"/>
+                    <input type="hidden" name="rec_pt_victoire" value="'.$_POST['pt_victoire'].'"/>
+                    <input type="hidden" name="rec_c_armee"     value="'.$_POST['c_armee'].'"/>
+                    <input type="hidden" name="rec_m_armee"     value="'.$_POST['m_armee'].'"/>
+                    <input type="hidden" name="rec_c_science"   value="'.$_POST['c_science'].'"/>
+                    <input type="hidden" name="rec_m_science"   value="'.$_POST['m_science'].'"/>
+                    <input type="hidden" name="rec_c_economie"  value="'.$_POST['c_economie'].'"/>
+                    <input type="hidden" name="rec_m_economie"  value="'.$_POST['m_economie'].'"/>
+                    <input type="hidden" name="rec_c_merveille" value="'.$_POST['c_merveille'].'"/>
+                    <input type="hidden" name="rec_m_merveille" value="'.$_POST['m_merveille'].'"/>
+                    <input type="hidden" name="rec_j_trader"    value="'.$_POST['j_trader'].'"/>
+                    <input type="hidden" name="rec_m_trader"    value="'.$_POST['m_trader'].'"/>
+                    <input type="hidden" name="rec_j_militaire" value="'.$_POST['j_militaire'].'"/>
+                    <input type="hidden" name="rec_m_militaire" value="'.$_POST['m_militaire'].'"/>
+                <input type="password" name="round_pw" placeholder="Mot de passe de la partie">
+                <button style="display: block; margin : auto;" type="submit" name="record" class="btn btn-success mt-4">Enregistrer score</button></form>';
+
+
 
               }
               elseif ($_POST['guest']==""){
@@ -186,7 +244,8 @@ $guestbar="    <p>Vous n'êtes pas identifié! Connectez vous ou indiquez un nom
                 <?php
               }
             }
-  
+//Message d'erreur si l'enregistrement a raté
+echo $points_message;
         ?>
 
 

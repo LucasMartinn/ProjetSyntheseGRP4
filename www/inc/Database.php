@@ -76,11 +76,11 @@ class Database{
         }
     }
 
-public function setPoint(string $round, int $card, int $amount, int $multi, ?int $user=Null, ?string $guest=Null):bool{
+public function setPoint(string $round, int $card, int $amount, int $multi, ?int $user=Null, ?string $guest=Null):int{
     try{
-        // Il faut obligatoirement une valeur pour $guest ou pour $user
-        if ($user == Null && $guest == Null) {
-            return false;
+        // Il faut strictement une valeur pour $guest ou pour $user
+        if (($user == Null && $guest == Null) || ($user != Null && $guest != Null)) {
+            return 0;
         }
         $this->dbh->beginTransaction();
         // On vérifie que l'enregistrement n'existe pas déjà
@@ -104,20 +104,27 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result['q']>0){
-            return false;
+            return 3; // Il y a déjà un enregistrement, on quitte
         }
         // On enregistre les points
-        $stmt = $this->dbh->prepare("INSERT INTO points (round, card, amount, multi, user, guest)
-            VALUES (:round, :card, :amount, :multi, :user, :guest);");
+        if ($user == Null){
+            $stmt = $this->dbh->prepare("INSERT INTO points (round, card, amount, multi, user, guest)
+            VALUES (:round, :card, :amount, :multi, NULL, :guest);");
+            $stmt->bindParam(':guest',  $guest,  PDO::PARAM_STR);
+        }
+        else{
+            $stmt = $this->dbh->prepare("INSERT INTO points (round, card, amount, multi, user, guest)
+            VALUES (:round, :card, :amount, :multi, :user, NULL);");
+            $stmt->bindParam(':user',   $user,   PDO::PARAM_INT);
+        }
+        
         $stmt->bindParam(':round',  $round,  PDO::PARAM_STR);
         $stmt->bindParam(':card',   $card,   PDO::PARAM_INT);
         $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
         $stmt->bindParam(':multi',  $multi,  PDO::PARAM_INT);
-        $stmt->bindParam(':user',   $user,   PDO::PARAM_INT);
-        $stmt->bindParam(':guest',  $guest,  PDO::PARAM_STR);
         $stmt->execute();
         $this->dbh->commit();
-        return True;
+        return 1;
     }
     catch (PDOException $e) {
         $this->dbh->rollBack();

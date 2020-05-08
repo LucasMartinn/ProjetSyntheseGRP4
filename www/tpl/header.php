@@ -19,7 +19,7 @@ else{
     <a href='register.php'>S'inscrire</a></p>
     </div>";
 }
-$header="<header>
+$header="<header id='headermenu'>
 <img src='images/menu.svg' onclick='show(\"mainMenu\")'><h1><a href='index.php'>Minotaure</a></h1><img src='$img_user' onclick='show(\"mainLogin\")'>
 </header>
 <div id='mainMenu'>

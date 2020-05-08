@@ -1,7 +1,6 @@
 <?php
 require_once("tpl/header.php");
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8">

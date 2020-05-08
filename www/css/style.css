@@ -8,7 +8,7 @@ body {
  * HEADER
  * */
  
-header {
+#headermenu {
 	height : 20vw ;
 	color : white ;
 	font-size : 20px ; ;
@@ -18,13 +18,13 @@ header {
 }
 
 
-body>header img {
+#headermenu img {
 	width: 13vw;
 	margin : 2vw 1vw ;
 	display: inline-block;
 }
 
-body>header h1{
+#headermenu h1{
 	font-size: 9vw;
 	display: inline-block;
 	width: 65vw ;
@@ -33,7 +33,12 @@ body>header h1{
 	vertical-align: 30%;
 }
 
-body>header>h1>a{
+#mainMenu h1, #mainLogin h1{
+	font-size: 5vw;
+	color: white;
+}
+
+#headermenu>h1>a{
 	color: white;
 	text-decoration: none;
 }
@@ -52,6 +57,7 @@ body>header>h1>a{
 	width: 100%;
 	display: none;
 	text-align: center;
+	z-index: 1000;
 }
 
 #mainLogin div, #mainLogin form{
