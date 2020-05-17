@@ -1,5 +1,5 @@
 <?php
-require_once("tpl/userbar.php");
+require_once("tpl/header.php");
 require_once("inc/Round.php");
 ?><!doctype html>
 <html lang="fr">
@@ -7,12 +7,12 @@ require_once("inc/Round.php");
         <meta charset="UTF-8">  
         <title>Récapitulatif partie</title>
         <link rel="stylesheet" href="css/round.css" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
         <link rel="icon" type="image/png" href="images/favicon.png"/>
     </head>
     <body>
-    <header>
-        <?= $userbar ?>
-    </header>
+<?= $header ?>
+
 
 <?php
 if (@$_GET['r']=="" || !isset($_GET['r'])){
@@ -52,11 +52,27 @@ else{
         <?php
         $i++;
     }
+    $url="http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/round.php?r=".$r->getCode();
 ?>
             <a href="form.php?r=<?= $r->getCode() ?>" class = "joueurs">
                 + AJOUTER SES POINTS
             </a>
+            <p>Scannez le qrcode pour rejoindre la partie</p>
+        <img src="#" id="outputimg" alt="qrcode pour rejoindre la partie">
         </div>
+        
+        <script type="text/javascript" src="lib/qr.js"></script>
+<script>
+
+var options = {
+    ecclevel: "M",
+    margin: "3",
+    modulesize: "6"
+};
+var url = QRCode.generatePNG("<?= $url ?>", options);
+document.getElementById('outputimg').src = url;
+
+</script>
         <?php
     }
     ?>
