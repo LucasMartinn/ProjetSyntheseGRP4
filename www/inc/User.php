@@ -249,6 +249,76 @@ class User{
         $this->setSession();
         return $db->setEmail($id, $email);
     }
+    
+    public function getUserByLogin(string $login):bool{
+        $db   = new Database;
+        $user = $db->getUserByLogin($login);
+        if (!empty($user)){
+            $this->id        = $user['id'];
+            $this->login     = $user['login'];
+            $this->token     = $user['token'];
+            $this->pw        = $user['pw'];
+            $this->firstname = $user['firstname'];
+            $this->lastname  = $user['lastname'];
+            $this->email     = $user['email'];
+            $this->status    = 3;
+            return True;
+        }
+        return false;
+    }
+    
+    public function sendCode():bool{
+        $to = $this->email;
+        $subject = "Minotaure - Récupération du mot de passe";
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+        $headers[] = 'From: Minotaure <ne-pas-repondrey@cyril-minette.net>';
+        
+        $code=sha1($this->pw);
+        
+        $lien="http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/lostpw.php?l=".urlencode($this->login)."&c=".urlencode($code);
+        
+        $message = "
+Vous avez demandé la récupération de votre mot de passe. Pour valider\r\n
+cette action, cliquez sur le lien suivant:\r\n
+$lien\r\n
+\r\n
+Si le lien ne fonctionne pas, vous pouvez copier-coller cette adresse\r\n
+dans votre navigateur web.\r\n
+\r\n
+Si vous n'êtes pas à l'orrigine de cette demande, vous pouvez\r\n
+simplement ignorer cet e-mail.\r\n
+\r\n
+Cordialement,\r\n
+L'équipe de Minotaure.\r\n";
+
+        return mail($to,$subject,$message,implode("\r\n", $headers));
+    }
+
+    public function sendNewPw(string $code):bool{
+        
+        if (sha1($this->pw) == $code){
+            $pw = bin2hex(random_bytes(5));
+            $this->setPw($this->$id, $pw);
+        }
+        
+        $to = $this->email;
+        $subject = "Minotaure - Nouveau mot de passe";
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+        $headers[] = 'From: Minotaure <ne-pas-repondrey@cyril-minette.net>';
+
+        $message = "
+Un nouveau mot de passe vous a été attribué. Vous pourrez le modifier\r\n
+depuis la page de profil après vous être connecté.\r\n
+\r\n
+Nouveau mot de passe: $pw\r\n
+\r\n
+Cordialement,\r\n
+L'équipe de Minotaure.\r\n";
+
+        return mail($to,$subject,$message,implode("\r\n", $headers));
+    }
 
     public function __tostring():string{
         $str ="id: ".       htmlentities($this->id).       "<br>";

@@ -1,18 +1,19 @@
 <?php
 require_once("tpl/userbar.php");
-if ($user->getStatus()==1){
+if ($user->getStatus()==1){ //User connecté
     $img_user="images/usercon.svg";
     $login_frame="    <p href='profile.php'>".$user->getLogin()."</p>
     <a href='profile.php'>Mon profil</a><br>
     <a href='".$_SERVER["PHP_SELF"]."?logout=1'>Déconnexion</a>";
 }
-else{
+else{ //User non connecté
     $img_user="images/user.svg";
     $login_frame="    <form method='post' id='header_login'>
     <h1>Se connecter</h1>
     <input type='text'     name='login' placeholder='Identifiant'><br>
     <input type='password' name='pw'    placeholder='Mot de passe'><br>
     <input type='submit'   value='OK'>
+    <a href='lostpw.php'>Mot de passe oublié</a>
     </form>
     <div id='header_register'>
     <h1>Pas encore de compte?</h1>
