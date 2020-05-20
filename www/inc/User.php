@@ -312,7 +312,7 @@ L'équipe de Minotaure.\r\n";
 Un nouveau mot de passe vous a été attribué. Vous pourrez le modifier\r\n
 depuis la page de profil après vous être connecté.\r\n
 \r\n
-Nouveau mot de passe: $pw\r\n
+Nouveau mot de passe: ".$this->pw."\r\n
 \r\n
 Cordialement,\r\n
 L'équipe de Minotaure.\r\n";

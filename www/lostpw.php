@@ -19,7 +19,7 @@ require_once("tpl/header.php");
 if(isset($_GET['l']) && isset($_GET['c'])) {
     $lostpw_user = new User();
     $lostpw_user->getUserByLogin($_GET['l']);
-    if ($lostpw_user->sendNewPw($_GET['code'])){
+    if ($lostpw_user->sendNewPw($_GET['c'])){
         echo"
         <p>Un e-mail contenant votre nouveau mot de passe vous a été envoyé.</p>";
     }
