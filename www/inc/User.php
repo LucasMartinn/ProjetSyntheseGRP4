@@ -271,53 +271,57 @@ class User{
         $to = $this->email;
         $subject = "Minotaure - Récupération du mot de passe";
         $headers[] = 'MIME-Version: 1.0';
-        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
-        $headers[] = 'From: Minotaure <ne-pas-repondrey@cyril-minette.net>';
+        $headers[] = 'Content-type: text/html; charset=utf-8';
+        $headers[] = 'From: Minotaure <ne-pas-repondre@cyril-minette.net>';
         
         $code=sha1($this->pw);
         
         $lien="http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/lostpw.php?l=".urlencode($this->login)."&c=".urlencode($code);
         
-        $message = "
-Vous avez demandé la récupération de votre mot de passe. Pour valider\r\n
-cette action, cliquez sur le lien suivant:\r\n
-$lien\r\n
-\r\n
-Si le lien ne fonctionne pas, vous pouvez copier-coller cette adresse\r\n
-dans votre navigateur web.\r\n
-\r\n
-Si vous n'êtes pas à l'orrigine de cette demande, vous pouvez\r\n
-simplement ignorer cet e-mail.\r\n
-\r\n
-Cordialement,\r\n
-L'équipe de Minotaure.\r\n";
+        $message = "<html><body>
+        <p>Vous avez demandé la récupération de votre mot de passe.
+        Pour validercette action, cliquez sur le lien suivant:</p>
+        <p>
+        <a href='$lien'>$lien</a>
+        </p>
+        <p>Si le lien ne fonctionne pas, vous pouvez copier-coller cette
+        adresse dans votre navigateur web.</p>
+        <p>Si vous n'êtes pas à l'orrigine de cette demande, vous
+        pouvez simplement ignorer cet e-mail.</p>
+        
+        <p>Cordialement,<br>
+        L'équipe de Minotaure.</p>
+        </body><html>";
 
         return mail($to,$subject,$message,implode("\r\n", $headers));
     }
 
     public function sendNewPw(string $code):bool{
         
-        if (sha1($this->pw) == $code){
-            $pw = bin2hex(random_bytes(5));
-            $this->setPw($this->$id, $pw);
+        if (sha1($this->pw) != $code){
+            return false;
         }
+        
+        $pw = bin2hex(random_bytes(5));
+        $this->setPw($this->id, $pw);
         
         $to = $this->email;
         $subject = "Minotaure - Nouveau mot de passe";
         $headers[] = 'MIME-Version: 1.0';
-        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
-        $headers[] = 'From: Minotaure <ne-pas-repondrey@cyril-minette.net>';
+        $headers[] = 'Content-type: text/html; charset=utf-8';
+        $headers[] = 'From: Minotaure <ne-pas-repondre@cyril-minette.net>';
 
-        $message = "
-Un nouveau mot de passe vous a été attribué. Vous pourrez le modifier\r\n
-depuis la page de profil après vous être connecté.\r\n
-\r\n
-Nouveau mot de passe: ".$this->pw."\r\n
-\r\n
-Cordialement,\r\n
-L'équipe de Minotaure.\r\n";
+        $message = "<html><body>
+        <p>Un nouveau mot de passe vous a été attribué. Nous
+        vous conseillons de le modifier dès votre connexion
+        depuis votre profil.</p>
 
-        return mail($to,$subject,$message,implode("\r\n", $headers));
+        <p>Nouveau mot de passe: <strong>$pw</strong></p>
+
+        <p>Cordialement,<br>
+        L'équipe de Minotaure.</p></body></html>";
+        mail($to,$subject,$message,implode("\r\n", $headers));
+        return true;
     }
 
     public function __tostring():string{
