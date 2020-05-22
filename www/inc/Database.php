@@ -160,6 +160,46 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
         }
     }
 
+    public function getRoundsFromUser(int $id, int $limit=null, int $page=null):?array{
+
+        try {
+            $req="SELECT DISTINCT round, SUM(amount * multi) score, name game
+            FROM points, user, round, game
+            WHERE points.user=1
+            AND user.id = points.user
+            AND points.round = round.code
+            AND round.game = game.id
+            GROUP BY round
+            ORDER BY score";
+            if ($limit != null){
+                $req  .= " LIMIT :begin, :rows";
+                $begin = ($page-1)*$limit;
+                $rows  = $limit;
+            }
+            
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare($req);
+            $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+            if ($limit != null){
+                $stmt->bindParam(':begin', $begin, PDO::PARAM_INT);
+                $stmt->bindParam(':rows' , $rows,  PDO::PARAM_INT);
+            }
+            $stmt->execute();
+            $result = $stmt->fetchall(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération des parties impossible";
+        }
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        else{
+            return array();
+        }
+    }
+
     public function getPoints(string $round, ?int $userid, ?string $guestname):array{
         try {
             if ( ($userid == Null && $guestname == Null) || ($userid != Null && $guestname != Null) ){

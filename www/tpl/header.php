@@ -3,6 +3,7 @@ require_once("tpl/userbar.php");
 if ($user->getStatus()==1){ //User connecté
     $img_user="images/usercon.svg";
     $login_frame="    <p href='profile.php'>".$user->getLogin()."</p>
+    <a href='stats.php'>Mes parties</a><br>
     <a href='profile.php'>Mon profil</a><br>
     <a href='".$_SERVER["PHP_SELF"]."?logout=1'>Déconnexion</a>";
 }

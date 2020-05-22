@@ -324,6 +324,21 @@ class User{
         return true;
     }
 
+public function getRounds($limit=null, $page=null):?array{
+    //Retourne un tableau de résultats
+    if($this->id!=null){
+        $db     = new Database;
+        $result = $db->getRoundsFromUser($this->id, $limit, $page);
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        else{
+            return array();
+        }
+    }
+    return null;
+}
+
     public function __tostring():string{
         $str ="id: ".       htmlentities($this->id).       "<br>";
         $str.="login: ".    htmlentities($this->login).    "<br>";
