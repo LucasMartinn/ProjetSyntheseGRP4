@@ -11,13 +11,13 @@ else{ //User non connecté
     $img_user="images/user.svg";
     $login_frame="    <form method='post' id='header_login'>
     <h1>Se connecter</h1>
-    <input type='text'     name='login' placeholder='Identifiant'><br>
-    <input type='password' name='pw'    placeholder='Mot de passe'><br>
-    <input type='submit'   value='OK'>
+    <input class = 'id_pswd' type='text' name='login' placeholder='Identifiant'><br>
+    <input class = 'id_pswd' type='password' name='pw' placeholder='Mot de passe'><br>
+    <input id = 'btn_valider' type='submit' value='Connexion'>
     <a href='lostpw.php'>Mot de passe oublié</a>
     </form>
     <div id='header_register'>
-    <h1>Pas encore de compte?</h1>
+    <h1>Pas encore de compte ?</h1>
     <a href='register.php'>S'inscrire</a></p>
     </div>";
 }

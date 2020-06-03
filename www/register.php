@@ -1,5 +1,6 @@
 <?php
 require_once("tpl/userbar.php");
+require_once("tpl/header.php");
 $msg="";
 if (isset($_POST['reg_login']) && isset($_POST['reg_pw'])){
     $u=new User($_POST['reg_login'],$_POST['reg_pw'],$_POST['reg_email'],$_POST['reg_firstname'],$_POST['reg_lastname']);
@@ -22,19 +23,19 @@ if (isset($_POST['reg_login']) && isset($_POST['reg_pw'])){
     <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0">
     <title>Minotaure</title>
     <link rel="icon" href="images/favicon.png" />
-    <!--<link rel="stylesheet" href="" media="screen"/>-->
+    <link rel="stylesheet" href="css/style.css" media="screen"/>
 </head>
 <body>
-<h1>Minotaure</h1>
+<?= $header ?>
 <h2>Créer un compte</h2>
     <?= $msg ?>
-    <form method='post'>
-    
+    <form id = 'form_creer' method='post'>
+
     <br>
     <label for="reg_login">Login:</label><br>
     <input type='text' id='reg_login' name='reg_login'>
     <br>
-    
+
     <br>
     <label for="reg_pw">Mot de passe:</label><br>
     <input type='password' id='reg_pw' name='reg_pw'>
@@ -49,15 +50,14 @@ if (isset($_POST['reg_login']) && isset($_POST['reg_pw'])){
     <label for="reg_lastname">Nom:</label><br>
     <input type='text' id='reg_lastname' name='reg_lastname'>
     <br>
-    
+
     <br>
     <label for="reg_email">Adresse e-mail:</label><br>
     <input type='text' id='reg_email' name='reg_email'>
     <br>
-    
+
     <input type='submit'>
     </form>
 
 </body>
 </html>
-

@@ -29,7 +29,7 @@ if (isset($_GET["logout"])){
 
 // à afficher si l'utilisateur est connecté
 if ($user->getLogin()!=Null){
-    $userbar="    <a class='login' href='profile.php'>".$user->getLogin()."</a> <a href='".$_SERVER["PHP_SELF"]."?logout=1'>Déconnexion</a>";
+    $userbar="    <a id = 'ndc' class='login' href='profile.php'>".$user->getLogin()."</a> <a id = 'deco' class = 'login' href='".$_SERVER["PHP_SELF"]."?logout=1'>Déconnexion</a>";
 }
 
 // à afficher si l'utilisateur est déconnecté

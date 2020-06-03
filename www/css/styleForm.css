@@ -1,18 +1,21 @@
-div label{
+div label {
     color: lightgray;
     display:block;
     float:top;
 }
 
-body{
-    background-color: #56514E;
-// zoom: 1.5;
-}
-
-h1{
+h1 {
     text-align: center;
     color: #F07329;
-    margin: 20 0 20 0;
+    padding-top : 3% ;
+}
+
+#nom_partie {
+  padding-top : 3% ;
+}
+
+#formulaire_calcul label {
+  color : white ;
 }
 
 input[type=number] {

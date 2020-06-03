@@ -4,7 +4,7 @@ require_once("inc/Round.php");
 ?><!doctype html>
 <html lang="fr">
     <head>
-        <meta charset="UTF-8">  
+        <meta charset="UTF-8">
         <title>Récapitulatif partie</title>
         <link rel="stylesheet" href="css/round.css" type="text/css" media="screen"/>
         <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
@@ -33,7 +33,7 @@ else{
             <h2><?= $r->getGamename() ?></h2>
             <h3>Partie <?= strtoupper($r->getCode()) ?></h3>
         </div>
-        
+
         <div id = "resultats">
 
 <?php
@@ -60,7 +60,7 @@ else{
             <p>Scannez le qrcode pour rejoindre la partie</p>
         <img src="#" id="outputimg" alt="qrcode pour rejoindre la partie">
         </div>
-        
+
         <script type="text/javascript" src="lib/qr.js"></script>
 <script>
 
@@ -76,7 +76,7 @@ document.getElementById('outputimg').src = url;
         <?php
     }
     ?>
-        
+
     </body>
-    
+
 </html>
