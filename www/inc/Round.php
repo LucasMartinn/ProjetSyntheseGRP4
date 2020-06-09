@@ -27,13 +27,13 @@ class Round{
             $this->newRound($game, $pw);
             return;
         }
-        if ($code!=""){
+        elseif ($code!=""){
             // Récupérer la partie depuis la base de donnée
             if ($this->fromDB($code)){
                 return;
             }
         }
-        if ($this->fromSession()){
+        elseif ($this->fromSession()){
             // Récupérer la partie depuis la session PHP
             return;
         }
@@ -134,7 +134,7 @@ public function setPoint(int $card, int $amount, int $multi, ?int $user=Null, ?s
     $points=$db->getPoints($code);
 }*/
 
-public function getCode():string{
+public function getCode():?string{
     return $this->code;
 }
 
@@ -176,6 +176,11 @@ public function getPlayers():array{
     }
 
     public function __tostring():string{
-        return $this->code;
+        if ($this->code != Null){
+            return $this->code;
+        }
+        else{
+            return "";
+        }
     }
 }
