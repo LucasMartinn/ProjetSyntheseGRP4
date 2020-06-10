@@ -161,11 +161,11 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
     }
 
     public function getRoundsFromUser(int $id, int $limit=null, int $page=null):?array{
-
+    // Retourne les parties auxquelles l'utilisateur a participé
         try {
             $req="SELECT DISTINCT round, SUM(amount * multi) score, name game
             FROM points, user, round, game
-            WHERE points.user=1
+            WHERE points.user=:id
             AND user.id = points.user
             AND points.round = round.code
             AND round.game = game.id
@@ -179,7 +179,7 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
             
             $this->dbh->beginTransaction();
             $stmt = $this->dbh->prepare($req);
-            $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             if ($limit != null){
                 $stmt->bindParam(':begin', $begin, PDO::PARAM_INT);
                 $stmt->bindParam(':rows' , $rows,  PDO::PARAM_INT);
@@ -198,6 +198,55 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
         else{
             return array();
         }
+    }
+
+    public function getEmptyRoundsFromUser(int $id):array{
+        // Retourne les parties créées par l'utilisateur mais auxquelles il n'a pas participé
+        try {
+            $req="SELECT code round, name game
+            FROM round, game
+            WHERE owner = :id
+            AND code NOT IN (
+            SELECT DISTINCT round
+            FROM points
+            WHERE points.user=:id
+            )
+            AND round.game = game.id";
+
+            
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare($req);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetchall(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Récupération des parties non jouées impossible";
+        }
+        if (gettype($result)=="array"){
+            return $result;
+        }
+        return array();
+    }
+
+    public function getPlayerFromRound(int $userid, string $roundcode):bool{
+        try {
+            $this->dbh->beginTransaction();
+            $stmt = $this->dbh->prepare("SELECT COUNT(*) c FROM points WHERE user=:user AND round=:code");
+            $stmt->bindParam(':user', $userid,    PDO::PARAM_INT);
+            $stmt->bindParam(':code', $roundcode, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->dbh->commit();
+        }
+        catch (PDOException $e) {
+            $this->dbh->rollBack();
+            echo "Ipossible de vérifier la présence du joueur";
+        }
+        //return $result;
+        return ($result['c']>0);
     }
 
     public function getPoints(string $round, ?int $userid, ?string $guestname):array{

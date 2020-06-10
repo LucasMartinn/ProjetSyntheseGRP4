@@ -332,9 +332,20 @@ public function getRounds($limit=null, $page=null):?array{
         if (gettype($result)=="array"){
             return $result;
         }
-        else{
-            return array();
+        return array();
+    }
+    return null;
+}
+
+public function getEmptyRounds():?array{
+    //Retourne un tableau de résultats
+    if($this->id!=null){
+        $db     = new Database;
+        $result = $db->getEmptyRoundsFromUser($this->id);
+        if (gettype($result)=="array"){
+            return $result;
         }
+        return array();
     }
     return null;
 }

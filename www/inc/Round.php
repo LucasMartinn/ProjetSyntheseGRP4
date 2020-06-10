@@ -134,6 +134,14 @@ public function setPoint(int $card, int $amount, int $multi, ?int $user=Null, ?s
     $points=$db->getPoints($code);
 }*/
 
+public function getPlayer(string $player_id=Null):bool{
+    if ($player_id!=Null){
+        $db=new Database();
+        return $db->getPlayerFromRound($player_id, $this->code);
+    }
+    return False;
+}
+
 public function getCode():?string{
     return $this->code;
 }

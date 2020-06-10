@@ -22,48 +22,55 @@ if ($user->getStatus()!=1){
 
 $points_message="";
 if (isset($_POST['record'])){
-    if ($_POST['rec_guest']!=""
+    // Si tous les champs sont remplis
+    if (($_POST['guest']!="" || $user->getStatus()==1)
         &&  $_POST['round_pw']!=""
-        &&  $_POST['rec_pt_victoire']!=""
-        &&  $_POST['rec_c_armee']!=""
-        &&  $_POST['rec_c_science']!=""
-        &&  $_POST['rec_c_economie']!=""
-        &&  $_POST['rec_c_merveille']!=""
-        &&  $_POST['rec_j_trader']!=""
-        &&  $_POST['rec_j_militaire']!=""
-        &&  $_POST['rec_m_armee']!=""
-        &&  $_POST['rec_m_science']!=""
-        &&  $_POST['rec_m_economie']!=""
-        &&  $_POST['rec_m_merveille']!=""
-        &&  $_POST['rec_m_trader']!=""
-        &&  $_POST['rec_m_militaire']!="") {
+        &&  $_POST['pt_victoire']!=""
+        &&  $_POST['c_armee']!=""
+        &&  $_POST['c_science']!=""
+        &&  $_POST['c_economie']!=""
+        &&  $_POST['c_merveille']!=""
+        &&  $_POST['j_trader']!=""
+        &&  $_POST['j_militaire']!=""
+        &&  $_POST['m_armee']!=""
+        &&  $_POST['m_science']!=""
+        &&  $_POST['m_economie']!=""
+        &&  $_POST['m_merveille']!=""
+        &&  $_POST['m_trader']!=""
+        &&  $_POST['m_militaire']!="") {
         // Enregistrement des points
-        $guestname = ($_POST['rec_guest']=="") ? Null : $_POST['rec_guest'];
+        $guestname = ($_POST['guest']=="") ? Null : $_POST['guest'];
         $ret=array();
-        $ret[0]=$round->setPoint(1,$_POST['rec_pt_victoire'], 1,                         $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[1]=$round->setPoint(2,$_POST['rec_c_armee'],     $_POST['rec_m_armee'],     $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[2]=$round->setPoint(3,$_POST['rec_c_science'],   $_POST['rec_m_science'],   $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[3]=$round->setPoint(4,$_POST['rec_c_economie'],  $_POST['rec_m_economie'],  $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[4]=$round->setPoint(5,$_POST['rec_c_merveille'], $_POST['rec_m_merveille'], $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[5]=$round->setPoint(6,$_POST['rec_j_trader'],    $_POST['rec_m_trader'],    $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[6]=$round->setPoint(7,$_POST['rec_j_militaire'], $_POST['rec_m_militaire'], $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[0]=$round->setPoint(1,$_POST['pt_victoire'], 1,                     $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[1]=$round->setPoint(2,$_POST['c_armee'],     $_POST['m_armee'],     $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[2]=$round->setPoint(3,$_POST['c_science'],   $_POST['m_science'],   $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[3]=$round->setPoint(4,$_POST['c_economie'],  $_POST['m_economie'],  $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[4]=$round->setPoint(5,$_POST['c_merveille'], $_POST['m_merveille'], $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[5]=$round->setPoint(6,$_POST['j_trader'],    $_POST['m_trader'],    $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[6]=$round->setPoint(7,$_POST['j_militaire'], $_POST['m_militaire'], $user->getId(), $guestname, $_POST['round_pw']);
 
+        $erreur=0;
         foreach ($ret as $value){
             if ($value==0){
                 $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: paramètres invalides.</div>";
+                $erreur=1;
                 break;
             }
             if ($value==2){
                 $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: le mot de passe est incorrect.</div>";
+                $erreur=1;
                 break;
             }
             if ($value==3){
                 $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: les données existent déjà.</div>";
+                $erreur=1;
                 break;
             }
         }
-        // L'enregistrement s'est bien passé, on retourne à la page de la partie
-        header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/round.php?r=".$round->getCode());
+        if($erreur==0){
+            // L'enregistrement s'est bien passé, on retourne à la page de la partie
+            header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/round.php?r=".$round->getCode());
+        }
     }
 }
 ?><!DOCTYPE html>
@@ -79,6 +86,12 @@ if (isset($_POST['record'])){
 <?= $header ?>
 <h1>Feuille de calcul - <?= $round->getGamename() ?><br><a href="round.php?r=<?= $round->getCode() ?>">Partie <?= strtoupper($round->getCode()) ?></a></h1>
 <hr>
+<?php 
+echo $points_message;
+// On vérifie que le joueur n'a pas déjà enregistré son score
+
+if(!$round->getPlayer($user->getId())){
+?>
 <div class="container">
     <form method="post">
         <?= $guestbar ?>
@@ -173,6 +186,18 @@ if (isset($_POST['record'])){
     </form>
 
 </div>
+<?php
+}
+//Si le joueur a déjà entré ses scores
+else{
+?>
+<div class="container">
+    <p>Vous avez déjà entré vos scores!</p>
+</div>
+<?php
+}
+?>
+
 
 <script type="text/javascript">
 
@@ -227,7 +252,7 @@ if (isset($_POST['record'])){
                                                                       + resultat + '<\p>';
 
            document.getElementById('enregistrer').innerHTML = '<input type="password" name="round_pw" placeholder="Mot de passe de la partie">' +
-                                                              '<button style="display: block; margin : auto;" type="submit" name="record" class="btn btn-success mt-4">Enregistrer score</button></form>'
+                                                              '<button style="display: block; margin : auto;" type="submit" name="record" class="btn btn-success mt-4">Enregistrer score</button>'
 
         }
 
