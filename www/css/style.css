@@ -53,25 +53,28 @@ body {
 #mainMenu {
 	animation-name: dissolve;
 	animation-duration: 0.3s;
-	background-color : none ;
+	background-color : #192730 ;
 	position: absolute;
 	width: 100%;
 	display: none;
 	text-align: center;
 	z-index: 1000;
-	margin-top : 5% ;
+	padding-top : 8% ;
+	padding-bottom : 8% ;
+	border-bottom : 2px solid #1b4159 ;
 }
 
 #mainLogin {
 	animation-name: dissolve;
 	animation-duration: 0.3s;
-	background-color : none ;
+	background-color : #192730 ;
 	position: absolute;
 	width: 100% ;
 	display: none;
 	text-align: center;
 	z-index: 1000;
-	margin-top : 5% ;
+	border-bottom : 2px solid #1b4159 ;
+	padding-bottom : 4% ;
 }
 
 #header_register {
@@ -142,7 +145,7 @@ body {
 	text-decoration: none;
 	font-weight: bold;
 	border-radius: 2vw;
-	margin: 2vw 0;
+	margin: 4vw 0;
 }
 
 #mainLogin p{
@@ -280,6 +283,12 @@ p.partie {
 	padding-top : 3% ;
 }
 
+#userbar a {
+	color : white ;
+	text-decoration : none ;
+	font-style : italic ;
+}
+
 .login {
 	color : white ;
 	text-decoration : none ;
@@ -320,4 +329,14 @@ p.partie {
 
 #texte_creer a {
 	color : white ;
+}
+
+#titre_stats {
+	color : white ;
+	text-align : center ;
+}
+
+#feuille_calcul a {
+	text-decoration : none ;
+	font-style : italic ;
 }

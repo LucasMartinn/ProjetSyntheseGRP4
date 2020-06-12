@@ -2,6 +2,7 @@
 require_once("tpl/userbar.php");
 require_once("inc/User.php");
 require_once("inc/Database.php");
+require_once("tpl/header.php");
 
 if (isset($_POST['enregistrer'])) {
 
@@ -60,9 +61,8 @@ if (isset($_POST['enregistrer'])) {
 
 <html>
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/styleForm.css"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
     <meta charset="UTF-8"/>
     <title>Profile - <?php echo $_SESSION['login'] ?></title>
     <style>
@@ -72,13 +72,14 @@ if (isset($_POST['enregistrer'])) {
     </style>
 </head>
 <body>
+<?= $header ?>
 <?= $userbar ?>
-<hr>
+
 <div class="container">
-    <form method="post">
+    <form id = 'form_profile' method="post">
 
         <div class="text-center">
-            <label for="login">Login</label>
+            <label id = 'first_label' for="login">Login</label>
             <input type="text" name="login" id="login" disabled="disabled" value="<?php echo $_SESSION['login'] ?>"/>
         </div>
 
@@ -123,5 +124,3 @@ if (isset($_POST['enregistrer'])) {
 
 </body>
 </html>
-
-

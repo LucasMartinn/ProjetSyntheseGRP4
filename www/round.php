@@ -57,7 +57,7 @@ else{
             <a href="form.php?r=<?= $r->getCode() ?>" class = "joueurs">
                 + AJOUTER SES POINTS
             </a>
-            <p>Scannez le qrcode pour rejoindre la partie</p>
+            <p>Scannez le qrcode ci-dessous pour rejoindre la partie</p>
         <img src="#" id="outputimg" alt="qrcode pour rejoindre la partie">
         </div>
 

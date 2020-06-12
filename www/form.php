@@ -22,61 +22,53 @@ if ($user->getStatus()!=1){
 
 $points_message="";
 if (isset($_POST['record'])){
-    // Si tous les champs sont remplis
-    if (($_POST['guest']!="" || $user->getStatus()==1)
+    if ($_POST['rec_guest']!=""
         &&  $_POST['round_pw']!=""
-        &&  $_POST['pt_victoire']!=""
-        &&  $_POST['c_armee']!=""
-        &&  $_POST['c_science']!=""
-        &&  $_POST['c_economie']!=""
-        &&  $_POST['c_merveille']!=""
-        &&  $_POST['j_trader']!=""
-        &&  $_POST['j_militaire']!=""
-        &&  $_POST['m_armee']!=""
-        &&  $_POST['m_science']!=""
-        &&  $_POST['m_economie']!=""
-        &&  $_POST['m_merveille']!=""
-        &&  $_POST['m_trader']!=""
-        &&  $_POST['m_militaire']!="") {
+        &&  $_POST['rec_pt_victoire']!=""
+        &&  $_POST['rec_c_armee']!=""
+        &&  $_POST['rec_c_science']!=""
+        &&  $_POST['rec_c_economie']!=""
+        &&  $_POST['rec_c_merveille']!=""
+        &&  $_POST['rec_j_trader']!=""
+        &&  $_POST['rec_j_militaire']!=""
+        &&  $_POST['rec_m_armee']!=""
+        &&  $_POST['rec_m_science']!=""
+        &&  $_POST['rec_m_economie']!=""
+        &&  $_POST['rec_m_merveille']!=""
+        &&  $_POST['rec_m_trader']!=""
+        &&  $_POST['rec_m_militaire']!="") {
         // Enregistrement des points
-        $guestname = ($_POST['guest']=="") ? Null : $_POST['guest'];
+        $guestname = ($_POST['rec_guest']=="") ? Null : $_POST['rec_guest'];
         $ret=array();
-        $ret[0]=$round->setPoint(1,$_POST['pt_victoire'], 1,                     $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[1]=$round->setPoint(2,$_POST['c_armee'],     $_POST['m_armee'],     $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[2]=$round->setPoint(3,$_POST['c_science'],   $_POST['m_science'],   $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[3]=$round->setPoint(4,$_POST['c_economie'],  $_POST['m_economie'],  $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[4]=$round->setPoint(5,$_POST['c_merveille'], $_POST['m_merveille'], $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[5]=$round->setPoint(6,$_POST['j_trader'],    $_POST['m_trader'],    $user->getId(), $guestname, $_POST['round_pw']);
-        $ret[6]=$round->setPoint(7,$_POST['j_militaire'], $_POST['m_militaire'], $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[0]=$round->setPoint(1,$_POST['rec_pt_victoire'], 1,                         $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[1]=$round->setPoint(2,$_POST['rec_c_armee'],     $_POST['rec_m_armee'],     $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[2]=$round->setPoint(3,$_POST['rec_c_science'],   $_POST['rec_m_science'],   $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[3]=$round->setPoint(4,$_POST['rec_c_economie'],  $_POST['rec_m_economie'],  $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[4]=$round->setPoint(5,$_POST['rec_c_merveille'], $_POST['rec_m_merveille'], $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[5]=$round->setPoint(6,$_POST['rec_j_trader'],    $_POST['rec_m_trader'],    $user->getId(), $guestname, $_POST['round_pw']);
+        $ret[6]=$round->setPoint(7,$_POST['rec_j_militaire'], $_POST['rec_m_militaire'], $user->getId(), $guestname, $_POST['round_pw']);
 
-        $erreur=0;
         foreach ($ret as $value){
             if ($value==0){
                 $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: paramètres invalides.</div>";
-                $erreur=1;
                 break;
             }
             if ($value==2){
                 $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: le mot de passe est incorrect.</div>";
-                $erreur=1;
                 break;
             }
             if ($value==3){
                 $points_message= "<div class='alert alert-danger' role='alert'>L'enregistrement a rencontré une erreur: les données existent déjà.</div>";
-                $erreur=1;
                 break;
             }
         }
-        if($erreur==0){
-            // L'enregistrement s'est bien passé, on retourne à la page de la partie
-            header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/round.php?r=".$round->getCode());
-        }
+        // L'enregistrement s'est bien passé, on retourne à la page de la partie
+        header("Location: http://".$_SERVER['SERVER_NAME'].pathinfo ( $_SERVER["PHP_SELF"] ,  PATHINFO_DIRNAME )."/round.php?r=".$round->getCode());
     }
 }
 ?><!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/styleForm.css"/>
     <link rel="stylesheet" media="screen" type="text/css" title="style" href="css/style.css"/>
     <meta charset="UTF-8" />
@@ -84,92 +76,52 @@ if (isset($_POST['record'])){
 </head>
 <body>
 <?= $header ?>
-<h1>Feuille de calcul - <?= $round->getGamename() ?><br><a href="round.php?r=<?= $round->getCode() ?>">Partie <?= strtoupper($round->getCode()) ?></a></h1>
-<hr>
-<?php 
-echo $points_message;
-// On vérifie que le joueur n'a pas déjà enregistré son score
-
-if(!$round->getPlayer($user->getId())){
-?>
+<h1 id = 'feuille_calcul'>Feuille de calcul - <?= $round->getGamename() ?><br><a href="round.php?r=<?= $round->getCode() ?>">Partie <?= strtoupper($round->getCode()) ?></a></h1>
 <div class="container">
-    <form method="post">
+    <form id = 'feuille_remplir' method="post">
         <?= $guestbar ?>
-        <div class="form-group row">
 
-            <div class="col-sm-6 text-center">
-                <label for="pt_victoire">Points de victoire</label>
-                <input type="number" name="pt_victoire" id="pt_victoire" min="0" value="<?php if (isset($_POST['pt_victoire'])){echo $_POST['pt_victoire'];} else {echo '0';}  ?>"/>
-            </div>
+        <label for="pt_victoire">Points de victoire</label>
+        <input type="number" name="pt_victoire" id="pt_victoire" min="0" value="<?php if (isset($_POST['pt_victoire'])){echo $_POST['pt_victoire'];} else {echo '0';}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-            </div>
+        <label for="c_armee">Cartes armées</label>
+        <input type="number" name="c_armee" id="c_armee" min="0" value="<?php if (isset($_POST['c_armee'])){echo $_POST['c_armee'];} else {echo $_POST['c_armee']=0;} ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="c_armee">Cartes armées</label>
-                <input type="number" name="c_armee" id="c_armee" min="0" value="<?php if (isset($_POST['c_armee'])){echo $_POST['c_armee'];} else {echo $_POST['c_armee']=0;} ?>"/>
-            </div>
+        <label for="m_armee">X armée</label>
+        <input type="number" name="m_armee" id="m_armee" min="0" value="<?php if (isset($_POST['m_armee'])){echo $_POST['m_armee'];} else {echo $_POST['m_armee']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="m_armee">X armée</label>
-                <input type="number" name="m_armee" id="m_armee" min="0" value="<?php if (isset($_POST['m_armee'])){echo $_POST['m_armee'];} else {echo $_POST['m_armee']=0;}  ?>"/>
-            </div>
+        <label for="c_science">Cartes sciences</label>
+        <input type="number" name="c_science" id="c_science" min="0" value="<?php if (isset($_POST['c_science'])){echo $_POST['c_science'];} else {echo $_POST['c_science']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="c_science">Cartes sciences</label>
-                <input type="number" name="c_science" id="c_science" min="0" value="<?php if (isset($_POST['c_science'])){echo $_POST['c_science'];} else {echo $_POST['c_science']=0;}  ?>"/>
-            </div>
+        <label for="m_science">X science</label>
+        <input type="number" name="m_science" id="m_science" min="0" value="<?php if (isset($_POST['m_science'])){echo $_POST['m_science'];} else {echo $_POST['m_science']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="m_science">X science</label>
-                <input type="number" name="m_science" id="m_science" min="0" value="<?php if (isset($_POST['m_science'])){echo $_POST['m_science'];} else {echo $_POST['m_science']=0;}  ?>"/>
-            </div>
+        <label for="c_economie">Cartes économies</label>
+        <input type="number" name="c_economie" id="c_economie" min="0" value="<?php if (isset($_POST['c_economie'])){echo $_POST['c_economie'];} else {echo $_POST['c_economie']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="c_economie">Cartes économies</label>
-                <input type="number" name="c_economie" id="c_economie" min="0" value="<?php if (isset($_POST['c_economie'])){echo $_POST['c_economie'];} else {echo $_POST['c_economie']=0;}  ?>"/>
-            </div>
+        <label for="m_economie">X economie</label>
+        <input type="number" name="m_economie" id="m_economie" min="0" value="<?php if (isset($_POST['m_economie'])){echo $_POST['m_economie'];} else {echo $_POST['m_economie']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="m_economie">X economie</label>
-                <input type="number" name="m_economie" id="m_economie" min="0" value="<?php if (isset($_POST['m_economie'])){echo $_POST['m_economie'];} else {echo $_POST['m_economie']=0;}  ?>"/>
-            </div>
+        <label for="c_merveille">Cartes merveilles</label>
+        <input type="number" name="c_merveille" id="c_merveille" min="0" value="<?php if (isset($_POST['c_merveille'])){echo $_POST['c_merveille'];} else {echo $_POST['c_merveille']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="c_merveille">Cartes merveilles</label>
-                <input type="number" name="c_merveille" id="c_merveille" min="0" value="<?php if (isset($_POST['c_merveille'])){echo $_POST['c_merveille'];} else {echo $_POST['c_merveille']=0;}  ?>"/>
-            </div>
+        <label for="m_merveille">X merveille</label>
+        <input type="number" name="m_merveille" id="m_merveille" min="0" value="<?php if (isset($_POST['m_merveille'])){echo $_POST['m_merveille'];} else {echo $_POST['m_merveille']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="m_merveille">X merveille</label>
-                <input type="number" name="m_merveille" id="m_merveille" min="0" value="<?php if (isset($_POST['m_merveille'])){echo $_POST['m_merveille'];} else {echo $_POST['m_merveille']=0;}  ?>"/>
-            </div>
+        <label for="j_trader">Jetons traders</label>
+        <input type="number" name="j_trader" id="j_trader" min="0" value="<?php if (isset($_POST['j_trader'])){echo $_POST['j_trader'];} else {echo $_POST['j_trader']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="j_trader">Jetons traders</label>
-                <input type="number" name="j_trader" id="j_trader" min="0" value="<?php if (isset($_POST['j_trader'])){echo $_POST['j_trader'];} else {echo $_POST['j_trader']=0;}  ?>"/>
-            </div>
+        <label for="m_trader">X trader</label>
+        <input type="number" name="m_trader" id="m_trader" min="1" value="<?php if (isset($_POST['m_trader'])){echo $_POST['m_trader'];} else {echo $_POST['m_trader']=1;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="m_trader">X trader</label>
-                <input type="number" name="m_trader" id="m_trader" min="1" value="<?php if (isset($_POST['m_trader'])){echo $_POST['m_trader'];} else {echo $_POST['m_trader']=1;}  ?>"/>
-            </div>
+        <label for="j_militaire">Jetons militaires</label>
+        <input type="number" name="j_militaire" id="j_militaire" min="0" value="<?php if (isset($_POST['j_militaire'])){echo $_POST['j_militaire'];} else {echo $_POST['j_militaire']=0;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="j_militaire">Jetons militaires</label>
-                <input type="number" name="j_militaire" id="j_militaire" min="0" value="<?php if (isset($_POST['j_militaire'])){echo $_POST['j_militaire'];} else {echo $_POST['j_militaire']=0;}  ?>"/>
-            </div>
+        <label for="m_militaire">X militaire</label>
+        <input type="number" name="m_militaire" id="m_militaire" min="1" value="<?php if (isset($_POST['m_militaire'])){echo $_POST['m_militaire'];} else {echo $_POST['m_militaire']=1;}  ?>"/>
 
-            <div class="col-sm-6 text-center">
-                <label for="m_militaire">X militaire</label>
-                <input type="number" name="m_militaire" id="m_militaire" min="1" value="<?php if (isset($_POST['m_militaire'])){echo $_POST['m_militaire'];} else {echo $_POST['m_militaire']=1;}  ?>"/>
-            </div>
-            <div class="col-sm-6 text-center">
-            </div>
+        <button type="button" name="calculer" onclick="calculerScore()" class="btn btn-primary mt-4">Calculer score</button>
 
-            <div class="col-sm-6 text-center">
-                <button type="button" name="calculer" onclick="calculerScore()" class="btn btn-primary mt-4">Calculer score</button>
-            </div>
 
             <div>
                 <span id="erreur"></span>
@@ -186,18 +138,6 @@ if(!$round->getPlayer($user->getId())){
     </form>
 
 </div>
-<?php
-}
-//Si le joueur a déjà entré ses scores
-else{
-?>
-<div class="container">
-    <p>Vous avez déjà entré vos scores!</p>
-</div>
-<?php
-}
-?>
-
 
 <script type="text/javascript">
 
@@ -242,17 +182,17 @@ else{
                                                         '<p>Merveille = ' + c_merveille*m_merveille + '<\p>' +
                                                         '<p>Trader = ' + j_trader*m_trader + '<\p>' +
                                                         '<p>Militaire = ' + j_militaire*m_militaire + '<\p>' +*/
-                                                        '<p>Récapitulatif : ' + pt_victoire + '+'
-                                                                      + c_armee*m_armee + '+'
-                                                                      + c_science*m_science + '+'
-                                                                      + c_economie*m_economie + '+'
-                                                                      + c_merveille*m_merveille + '+'
-                                                                      + j_trader*m_trader + '+'
-                                                                      + j_militaire*m_militaire + '='
+                                                        '<p>Récapitulatif : ' + pt_victoire + ' + '
+                                                                      + c_armee*m_armee + ' + '
+                                                                      + c_science*m_science + ' + '
+                                                                      + c_economie*m_economie + ' + '
+                                                                      + c_merveille*m_merveille + ' + '
+                                                                      + j_trader*m_trader + ' + '
+                                                                      + j_militaire*m_militaire + ' = '
                                                                       + resultat + '<\p>';
 
-           document.getElementById('enregistrer').innerHTML = '<input type="password" name="round_pw" placeholder="Mot de passe de la partie">' +
-                                                              '<button style="display: block; margin : auto;" type="submit" name="record" class="btn btn-success mt-4">Enregistrer score</button>'
+           document.getElementById('enregistrer').innerHTML = '<input id = "resultat_calcul" type="password" name="round_pw" placeholder="Mot de passe de la partie">' +
+                                                              '<button id = "btn_calcul" style="display: block; margin : auto;" type="submit" name="record" class="btn btn-success mt-4">Enregistrer score</button></form>'
 
         }
 

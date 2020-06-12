@@ -1,13 +1,7 @@
 <?php
-require_once("tpl/header.php");
-require_once("inc/Round.php");
 
-if(isset($_POST['game']) && isset($_POST['pw']) && $_POST['pw']!=""){
-    $r=new Round($_POST['game'],$_POST['pw']);
-    if ($r->getCode()){
-        header("Location: http://" . $_SERVER['SERVER_NAME'] . pathinfo($_SERVER["PHP_SELF"],PATHINFO_DIRNAME) . "/round.php?r=" . $r->getCode());
-    }
-}
+require_once("inc/Round.php");
+require_once("tpl/header.php");
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -21,6 +15,9 @@ if(isset($_POST['game']) && isset($_POST['pw']) && $_POST['pw']!=""){
 <body>
 <?= $header ?>
 
+<?php
+if (!isset($_POST['game']) || !isset($_POST['pw'])){
+?>
 <h2>Créer une partie</h2>
     <form id = 'form_create' method='post'>
 
@@ -29,12 +26,25 @@ if(isset($_POST['game']) && isset($_POST['pw']) && $_POST['pw']!=""){
         <option value="2">Autre jeu</option>
     </select>
     <br>
-    <label for="pw">Mot de passe de la partie:</label>
+    <label for="pw">Mot de passe:</label>
     <input type='password' id='pw' name='pw'>
     <br>
-    Partagez ce mot de passe avec les joueurs pour qu'ils entrent leurs points!<br><br>
     <input type='submit'>
     </form>
+<?php
+}
+else{
+$r=new Round($_POST['game'],$_POST['pw']);
+?>
+<h2>Créer une partie</h2>
+<div id = "texte_creer">
+  <p>Une nouvelle partie a été créée avec le code <strong><?= strtoupper($r) ?></strong><p>
+  <p>Vous pouvez maintenant <a href='form.php?r=<?= $r ?>'>renseigner vos scores</a> ou partager ce code avec d'autres joueurs!</p>
+  <p>Le mot de passe de la partie sera demandé aux joueurs pour remplir leurs scores.</p>
+</div>
+<?php
+}
+?>
 
 
 </body>

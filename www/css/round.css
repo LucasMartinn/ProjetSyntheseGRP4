@@ -33,7 +33,7 @@ header {
 #jeu {
 	margin-top : 5% ;
 	text-align : center ;
-	width : 30% ;
+	width : 50% ;
 	margin-left : auto ;
 	margin-right : auto ;
 	color : white ;
@@ -41,17 +41,17 @@ header {
 
 #jeu h2 {
 	font-variant : small-caps ;
-	font-size : 3em ;
+	font-size : 2em ;
 }
 
 #jeu h3 {
 	font-style : italic ;
 	font-size : 2em ;
-	
+
 }
 
 #resultats {
-	width : 30% ;
+	width : 60% ;
 	margin : auto ;
 	border-radius: 5px;
 	height : 365px ;
@@ -63,6 +63,7 @@ header {
 }
 
 a.joueurs {
+	text-decoration : none ;
 	color:white ;
 	background-color : #192730 ;
 	margin-bottom : 20px ;
@@ -72,7 +73,8 @@ a.joueurs {
 	height : 70px ;
 	border-radius: 10px;
 	border : 1px solid #1b4159 ;
-	display: block 
+	display: block ;
+	padding : 4% ;
 }
 
 a.joueurs.guest {
@@ -85,4 +87,8 @@ a.joueurs.guest {
 	border-radius: 10px;
 	border : 1px dashed #1b4159 ;
 	display: block ;
+}
+
+#resultats p {
+	line-height : 175% ;
 }
