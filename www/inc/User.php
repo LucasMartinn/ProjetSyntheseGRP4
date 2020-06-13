@@ -218,12 +218,28 @@ class User{
         return $this->login;
     }
 
+    public function getLastname():?string{
+        return $this->lastname;
+    }
+
+    public function getFirstname():?string{
+        return $this->firstname;
+    }
+
+    public function getEmail():?string{
+        return $this->email;
+    }
+
+    public function getPw():?string{
+        return $this->pw;
+    }
+
     public function getId():?int{
         return $this->id;
     }
 
     public function setPw(int $id, string $pw):bool{
-        $this->pw = $pw;
+        $this->pw = password_hash($pw, PASSWORD_DEFAULT);
         $db = new Database;
         $this->setSession();
         return $db->setPw($id, $pw);

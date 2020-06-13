@@ -2,8 +2,32 @@ body {
 	background-image : url("../images/background.png") ;
 	background-color : #222222;
 	margin : 0 ;
-	color : white
+	color : white ;
 	text-align : center ;
+}
+
+.alert-danger{
+	display :block ;
+	color : white ;
+	background-color : #ec3c3c ;
+	border-radius : 3vw ;
+	font-size : 3vw ;
+	font-weight : bold;
+	border-width : 1vw ;
+	border-style : solid ;
+	border-color : white ;
+}
+
+.alert-success{
+	display :block ;
+	color : white ;
+	background-color : #3cc662 ;
+	border-radius : 3vw ;
+	font-size : 3vw ;
+	font-weight : bold;
+	border-width : 0.5vw ;
+	border-style : solid ;
+	border-color : white ;
 }
 
 /*
@@ -13,7 +37,7 @@ body {
 #headermenu {
 	height : 20vw ;
 	color : white ;
-	font-size : 20px ; ;
+	font-size : 20px ;
 	background-color : #192730 ;
 	border-bottom : 2px solid #1b4159 ;
 	text-align: center;

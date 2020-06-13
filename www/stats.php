@@ -10,11 +10,39 @@ require_once("tpl/header.php");
 </head>
 <body>
 <?= $header ?>
-<h1 id = 'titre_stats'>Mes parties</h1>
+<h1 id='titre_stats'>Mes parties</h1>
 <section id="mes_parties">
 <?php
-    $i=0;
-    foreach ($user->getRounds() as $round){
+if ($user->getStatus() != 1){
+    echo"<p>Veuillez vous connecter pour afficher vos parties</p>";
+}
+
+// Parties créées et vides
+$i=0;
+$liste=$user->getEmptyRounds();
+
+if ($liste !== Null){
+    foreach ($liste as $round){
+?>
+    <a class = "parties" href="round.php?r=<?= $round['round'] ?>" id="partie_<?= $round['round'] ?>">
+        <p>
+        <?= $round['game'] ?><br>
+        <?= strtoupper($round['round']) ?> Ø
+        </p>
+    </a>
+<?php
+        $i++;
+    }
+    if ($i==0){
+        echo "<p>Vous n'avez participé à aucune partie</p>";
+    }
+}
+
+// Parties jouées
+$i=0;
+$liste=$user->getRounds();
+if ($liste !== Null){
+    foreach ($liste as $round){
 ?>
     <a class = "parties" href="round.php?r=<?= $round['round'] ?>" id="partie_<?= $round['round'] ?>">
         <p>
@@ -25,7 +53,10 @@ require_once("tpl/header.php");
 <?php
         $i++;
     }
-
+    if ($i==0){
+        echo "<p>Vous n'avez participé à aucune partie</p>";
+    }
+}
 ?>
 </section>
 
