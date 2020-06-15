@@ -142,7 +142,7 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
             UNION
             SELECT DISTINCT user 'id', guest 'guestname', NULL 'login', SUM(amount * multi) score FROM points WHERE round=:round AND points.user IS NULL
             GROUP BY guestname
-            ORDER BY score");
+            ORDER BY score DESC");
             $stmt->bindParam(':round', $round, PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetchall(PDO::FETCH_ASSOC);
@@ -234,7 +234,7 @@ public function setPoint(string $round, int $card, int $amount, int $multi, ?int
     public function getPlayerFromRound(int $userid, string $roundcode):bool{
         try {
             $this->dbh->beginTransaction();
-            $stmt = $this->dbh->prepare("SELECT COUNT(*) c FROM points WHERE user=:user AND round=:code ORDER BY c DESC");
+            $stmt = $this->dbh->prepare("SELECT COUNT(*) c FROM points WHERE user=:user AND round=:code");
             $stmt->bindParam(':user', $userid,    PDO::PARAM_INT);
             $stmt->bindParam(':code', $roundcode, PDO::PARAM_STR);
             $stmt->execute();
