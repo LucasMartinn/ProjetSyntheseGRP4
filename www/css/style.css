@@ -364,3 +364,11 @@ p.partie {
 	text-decoration : none ;
 	font-style : italic ;
 }
+
+/*
+ * round.php
+ */
+#social img {
+	width: 10vw;
+	margin: 2% 5%;
+}

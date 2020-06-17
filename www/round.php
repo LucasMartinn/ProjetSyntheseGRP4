@@ -1,6 +1,7 @@
 <?php
 require_once("tpl/header.php");
 require_once("inc/Round.php");
+require_once("tpl/social.php");
 ?><!doctype html>
 <html lang="fr">
     <head>
@@ -57,7 +58,9 @@ else{
             <a href="form.php?r=<?= $r->getCode() ?>" class = "joueurs">
                 + AJOUTER SES POINTS
             </a>
-            <p>Scannez le qrcode ci-dessous pour rejoindre la partie</p>
+            <p>Partagez sur les réseaux sociaux</p>
+            <?= social($r) ?>
+            <p>Scannez le QR Code ci-dessous pour rejoindre la partie</p>
         <img src="#" id="outputimg" alt="qrcode pour rejoindre la partie">
         </div>
 
