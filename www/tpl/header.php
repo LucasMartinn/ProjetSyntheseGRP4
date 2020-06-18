@@ -26,7 +26,7 @@ $header="<header id='headermenu'>
 </header>
 <div id='mainMenu'>
 <a href='index.php'>Accueil</a><br>
-<a href='#'>À propos</a>
+<a href='about.php'>À propos</a>
 </div>
 <div id='mainLogin'>
 $login_frame
