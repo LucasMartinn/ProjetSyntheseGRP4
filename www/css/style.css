@@ -297,6 +297,25 @@ p.partie {
 	margin-top : 4% ;
 }
 
+#form_profile {
+	text-align : center ;
+	zoom: 200%;
+}
+
+#form_profile label {
+	color : white ;
+	margin-bottom: 0;
+}
+
+#form_profile input {
+	margin-top : 1% ;
+	width: 45%;
+}
+
+#form_profile input:last-child {
+	margin-top : 5% ;
+}
+
 #userbar {
 	height : 10vw ;
 	color : white ;
