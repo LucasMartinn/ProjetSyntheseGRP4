@@ -94,8 +94,10 @@ if(!$round->getPlayer($user->getId())){
     <form id = 'feuille_remplir' method="post">
         <?= $guestbar ?>
 
+        <br>
         <label for="pt_victoire">Points de victoire</label>
         <input type="number" name="pt_victoire" id="pt_victoire" min="0" value="<?php if (isset($_POST['pt_victoire'])){echo $_POST['pt_victoire'];} else {echo '0';}  ?>"/>
+        <br>
 
         <label for="c_armee">Cartes armées</label>
         <input type="number" name="c_armee" id="c_armee" min="0" value="<?php if (isset($_POST['c_armee'])){echo $_POST['c_armee'];} else {echo '0';} ?>"/>

@@ -1,4 +1,6 @@
-
+body p{
+    margin: 2%;
+}
 
 h1 {
     text-align: center;
@@ -30,7 +32,8 @@ input[type=number] {
     color: #F07329;
     text-align: center;
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 2em;
+    margin-bottom: 0 !important;
 }
 
 #recap{
@@ -42,6 +45,7 @@ input[type=number] {
 
 hr{
     border-color: lightgray;
+    margin: 0;
 }
 
 .indentation{
@@ -99,13 +103,15 @@ body {
 }
 
 #feuille_remplir {
-  text-align : center ;
+  text-align : center;
+  zoom: 130%;
+
 }
 
 #feuille_remplir label {
   display : block ;
   color : white ;
-  margin-bottom : 2% ;
+  margin-bottom : 1.8% ;
 }
 
 #feuille_remplir input {
